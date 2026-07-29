@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+  <meta name="theme-color" content="#87CEEB">
+  <title>珊珊的生活基地</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="珊珊基地">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- 顶部标题 -->
+  <header class="header">
+    <div class="header-title">珊珊的生活基地</div>
+    <div class="header-date" id="todayDate"></div>
+  </header>
+
+  <!-- Tab切换 -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="study">📚 学习计划</button>
+    <button class="tab" data-tab="life">🏠 生活习惯</button>
+    <button class="tab" data-tab="sport">🏃 运动锻炼</button>
+  </nav>
+
+  <!-- 进度条 -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label"><span id="progressText">今日完成 0%</span><span id="streakText">🔥0天</span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- 内容区 -->
+  <main class="content" id="content">
+    <!-- 学习计划 -->
+    <section class="page active" data-page="study" id="pageStudy"></section>
+    <!-- 生活习惯 -->
+    <section class="page" data-page="life" id="pageLife"></section>
+    <!-- 运动锻炼 -->
+    <section class="page" data-page="sport" id="pageSport"></section>
+  </main>
+
+  <!-- 美乐蒂状态栏 -->
+  <footer class="melody-bar" id="melodyBar">
+    <div class="melody-avatar" id="melodyAvatar">
+      <svg viewBox="0 0 100 100" class="melody-svg" id="melodySvg">
+        <!-- 耳朵 -->
+        <ellipse cx="28" cy="22" rx="10" ry="14" fill="#6495ED" id="earL"/>
+        <ellipse cx="72" cy="22" rx="10" ry="14" fill="#6495ED" id="earR"/>
+        <!-- 蓝色帽兜 -->
+        <circle cx="50" cy="45" r="30" fill="#4682B4" id="hood"/>
+        <!-- 脸（白色） -->
+        <ellipse cx="50" cy="50" rx="24" ry="22" fill="#fff" id="face"/>
+        <!-- 眼睛 -->
+        <circle cx="38" cy="42" r="3.5" fill="#333" id="eyeL"/>
+        <circle cx="62" cy="42" r="3.5" fill="#333" id="eyeR"/>
+        <circle cx="39" cy="41" r="1.2" fill="#fff"/>
+        <circle cx="63" cy="41" r="1.2" fill="#fff"/>
+        <!-- 鼻子 -->
+        <ellipse cx="50" cy="50" rx="3" ry="2" fill="#FFB6C1"/>
+        <!-- 嘴巴 -->
+        <path d="M44 56 Q50 62 56 56" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round" id="mouth"/>
+        <!-- 腮红 -->
+        <circle cx="34" cy="53" r="5" fill="#FFB6C1" opacity="0.5"/>
+        <circle cx="66" cy="53" r="5" fill="#FFB6C1" opacity="0.5"/>
+      </svg>
+    </div>
+    <div class="melody-info">
+      <div class="melody-status" id="melodyStatus">美乐蒂在等你…</div>
+      <div class="melody-actions" id="melodyActions"></div>
+    </div>
+    <div class="melody-streak-badge" id="streakBadge"></div>
+  </footer>
+
+  <!-- 喂食弹窗 -->
+  <div class="modal" id="feedModal">
+    <div class="modal-content">
+      <h3>🍖 给美乐蒂喂食</h3>
+      <div class="food-grid" id="foodGrid"></div>
+      <button class="modal-close" onclick="closeModal('feedModal')">关闭</button>
+    </div>
+  </div>
+
+  <!-- 洗澡弹窗 -->
+  <div class="modal" id="bathModal">
+    <div class="modal-content">
+      <h3>🛀 给美乐蒂洗澡</h3>
+      <div class="bath-steps" id="bathSteps"></div>
+      <button class="modal-close" onclick="closeModal('bathModal')">关闭</button>
+    </div>
+  </div>
+
+  <!-- 鼓励弹窗 -->
+  <div class="modal" id="praiseModal">
+    <div class="modal-content praise">
+      <div class="praise-emoji" id="praiseEmoji">🎉</div>
+      <p id="praiseText"></p>
+      <button class="modal-close" onclick="closeModal('praiseModal')">好的</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js');}</script>
+</body>
+</html>
