@@ -6,7 +6,8 @@ var ASSETS = [
   './app.js',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './install.html'
 ];
 
 self.addEventListener('install', function(e) {
