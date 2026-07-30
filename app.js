@@ -1708,59 +1708,39 @@ function updateSidebarCounts(){
 }
 
 function updateMelody(){
-  var d=loadTask();
-  var studyTasks=getStudyTasks();
-  var done=0;studyTasks.forEach(function(t){if(d[t])done++;});
-  var pct=Math.round(done/studyTasks.length*100);
-  var total=studyTasks.length;
-  var avatar=$('#mascotSvg').parentElement;
-  var status=$('#mascotStatus');
-  var actions=$('#melodyActions');
-  var mouth=$('#mouth');
-  var hood=$('#hood');
-  var earL=$('#earL');
-  var earR=$('#earR');
-  var bow=$('#bow');
-  // 多级状态
-  avatar.classList.remove('sad','happy','super');
-  if(pct>=100){
-    // 🌟 全部完成！
-    avatar.classList.add('super');
-    status.textContent='太厉害了！全部完成！美乐蒂超开心！🎉🌟';
-    actions.style.display='flex';
-    if(mouth)mouth.setAttribute('d','M42 54 Q50 72 58 54');
-    if(hood)hood.setAttribute('fill','#FFD700');
-    if(earL)earL.setAttribute('fill','#FFD700');
-    if(earR)earR.setAttribute('fill','#FFD700');
-    if(bow)bow.setAttribute('opacity','1');
-    // 今日首次100%弹窗
-    if(!d._celebrated_100){
-      d._celebrated_100=true;saveTask(d);
-      setTimeout(function(){showPraise('🌟','恭喜珊珊！今天所有任务全部完成！\\n美乐蒂开心得发光了✨\\n明天继续加油哦～');},600);
+  try{
+    var d=loadTask();
+    var studyTasks=getStudyTasks();
+    var done=0;studyTasks.forEach(function(t){if(d[t])done++;});
+    var pct=Math.round(done/studyTasks.length*100);
+    var total=studyTasks.length;
+    var avatar=$('#mascotSvg');
+    var status=$('#mascotStatus');
+    var actions=$('#melodyActions');
+    if(!avatar||!status){console.warn('Melody elements missing');return;}
+    avatar.classList.remove('sad','happy','super');
+    if(pct>=100){
+      avatar.classList.add('super');
+      status.textContent='太厉害了！全部完成！美乐蒂超开心！🎉🌟';
+      actions.style.display='flex';
+      if(!d._celebrated_100){d._celebrated_100=true;saveTask(d);setTimeout(function(){showPraise('🌟','恭喜珊珊！今天所有任务全部完成！\n明天继续加油哦～');},600);}
+      updateStreak(true);
+    }else if(pct>=70){
+      avatar.classList.add('happy');
+      status.textContent='谢谢珊珊！今天你真棒！💖 ('+done+'/'+total+')';
+      actions.style.display='flex';
+      updateStreak(true);
+    }else if(pct>=40){
+      status.textContent='加油珊珊！快过半啦～💪 ('+done+'/'+total+')';
+      actions.style.display='none';
+      updateStreak(false);
+    }else{
+      avatar.classList.add('sad');
+      status.textContent='珊珊，今天还没开始呢，快行动起来吧！🌱 ('+done+'/'+total+')';
+      actions.style.display='none';
+      updateStreak(false);
     }
-    updateStreak(true);
-  }else if(pct>=70){
-    avatar.classList.add('happy');
-    status.textContent='谢谢珊珊！今天你真棒！💖 ('+done+'/'+total+')';
-    actions.style.display='flex';
-    if(mouth)mouth.setAttribute('d','M42 56 Q50 66 58 56');
-    if(hood){hood.setAttribute('fill','url(#hoodGrad)');}
-    if(earL)earL.setAttribute('fill','url(#hoodGrad)');
-    if(earR)earR.setAttribute('fill','url(#hoodGrad)');
-    updateStreak(true);
-  }else if(pct>=40){
-    avatar.classList.remove('sad');
-    status.textContent='加油珊珊！快过半啦～💪 ('+done+'/'+total+')';
-    actions.style.display='none';
-    if(mouth)mouth.setAttribute('d','M44 58 Q50 64 56 58');
-    updateStreak(false);
-  }else{
-    avatar.classList.add('sad');
-    status.textContent='珊珊，今天还没开始呢，快行动起来吧！🌱 ('+done+'/'+total+')';
-    actions.style.display='none';
-    if(mouth)mouth.setAttribute('d','M44 60 Q50 52 56 60');
-    updateStreak(false);
-  }
+  }catch(e){console.error('updateMelody error:',e);}
 }
 
 function updateStreak(qualified){
@@ -1815,11 +1795,17 @@ function closeAllModals(){$$('.modal').forEach(function(m){m.classList.remove('s
 // ============ 关卡切换 ============
 // ============ 初始化 ============
 function init(){
-  setupSidebar();
-  renderSubcat();
-  renderContent();
-  updateProgress();
-  updateMelody();
+  try{
+    setupSidebar();
+    renderSubcat();
+    renderContent();
+    updateProgress();
+    updateMelody();
+  }catch(e){
+    console.error('init error:',e);
+    var s=document.getElementById('mascotStatus');
+    if(s)s.textContent='初始化出错: '+e.message;
+  }
 }
 
 document.addEventListener('DOMContentLoaded',init);
