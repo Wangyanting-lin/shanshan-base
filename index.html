@@ -16,66 +16,116 @@
 </head>
 <body>
 <div class="app">
-  <!-- 顶部标题 -->
-  <header class="header">
-    <div class="header-title">珊珊的生活基地</div>
-    <div class="header-date" id="todayDate"></div>
+  <!-- 顶部：美乐蒂头+状态 -->
+  <header class="top-header">
+    <div class="mascot">
+      <svg viewBox="0 0 100 100" class="mascot-svg" id="mascotSvg">
+        <defs>
+          <linearGradient id="hoodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#7EC8E3"/>
+            <stop offset="100%" stop-color="#4F86C6"/>
+          </linearGradient>
+        </defs>
+        <!-- 耳朵内层粉色 -->
+        <ellipse cx="28" cy="28" rx="7" ry="10" fill="#FFB6C1"/>
+        <ellipse cx="72" cy="28" rx="7" ry="10" fill="#FFB6C1"/>
+        <!-- 耳朵外层蓝 -->
+        <ellipse cx="28" cy="22" rx="11" ry="15" fill="url(#hoodGrad)" id="earL"/>
+        <ellipse cx="72" cy="22" rx="11" ry="15" fill="url(#hoodGrad)" id="earR"/>
+        <!-- 蓝色帽兜 -->
+        <circle cx="50" cy="46" r="32" fill="url(#hoodGrad)" id="hood"/>
+        <!-- 脸部白色 -->
+        <ellipse cx="50" cy="52" rx="25" ry="22" fill="#fff" id="face"/>
+        <!-- 眼睛 -->
+        <circle cx="38" cy="44" r="4" fill="#333" id="eyeL"/>
+        <circle cx="62" cy="44" r="4" fill="#333" id="eyeR"/>
+        <circle cx="39" cy="42" r="1.5" fill="#fff"/>
+        <circle cx="63" cy="42" r="1.5" fill="#fff"/>
+        <!-- 鼻子 -->
+        <ellipse cx="50" cy="52" rx="3" ry="2" fill="#FF9EC4"/>
+        <!-- 嘴巴 -->
+        <path d="M42 58 Q50 67 58 58" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round" id="mouth"/>
+        <!-- 腮红 -->
+        <circle cx="32" cy="55" r="5" fill="#FFB6C1" opacity="0.6"/>
+        <circle cx="68" cy="55" r="5" fill="#FFB6C1" opacity="0.6"/>
+        <!-- 头饰蝴蝶结 -->
+        <g id="bow">
+          <circle cx="22" cy="18" r="3" fill="#FF9EC4"/>
+          <circle cx="78" cy="18" r="3" fill="#FF9EC4"/>
+        </g>
+      </svg>
+    </div>
+    <div class="mascot-info">
+      <div class="mascot-name">美乐蒂 🐶</div>
+      <div class="mascot-status" id="mascotStatus">美乐蒂在等你～</div>
+    </div>
+    <div class="header-right">
+      <div class="streak-box">
+        <div class="streak-num" id="streakNum">0</div>
+        <div class="streak-label">连续天数</div>
+      </div>
+    </div>
   </header>
 
-  <!-- Tab切换 -->
-  <nav class="tabs">
-    <button class="tab active" data-tab="study">📚 学习计划</button>
-    <button class="tab" data-tab="life">🏠 生活习惯</button>
-    <button class="tab" data-tab="sport">🏃 运动锻炼</button>
-  </nav>
-
   <!-- 进度条 -->
-  <div class="progress-bar-wrap">
-    <div class="progress-label"><span id="progressText">今日完成 0%</span><span id="streakText">🔥0天</span></div>
+  <div class="progress-wrap">
+    <div class="progress-info">
+      <span>今日任务完成度</span>
+      <span id="progressPct">0%</span>
+    </div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   </div>
 
-  <!-- 内容区 -->
-  <main class="content" id="content">
-    <!-- 学习计划 -->
-    <section class="page active" data-page="study" id="pageStudy"></section>
-    <!-- 生活习惯 -->
-    <section class="page" data-page="life" id="pageLife"></section>
-    <!-- 运动锻炼 -->
-    <section class="page" data-page="sport" id="pageSport"></section>
-  </main>
+  <!-- 主内容区：左侧栏 + 右侧内容 -->
+  <div class="main-container">
+    <!-- 左侧导航 -->
+    <nav class="sidebar" id="sidebar">
+      <div class="side-cat-label">📚 学习</div>
+      <div class="side-item active" data-cat="chinese">
+        <div class="side-icon" style="background:linear-gradient(135deg,#FFB6C1,#FF85A2)">📖</div>
+        <div class="side-name">语文</div>
+        <div class="side-count" id="cntChinese">0/0</div>
+      </div>
+      <div class="side-item" data-cat="math">
+        <div class="side-icon" style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5)">🔢</div>
+        <div class="side-name">数学</div>
+        <div class="side-count" id="cntMath">0/0</div>
+      </div>
+      <div class="side-item" data-cat="english">
+        <div class="side-icon" style="background:linear-gradient(135deg,#FFD93D,#FFA552)">🌍</div>
+        <div class="side-name">英语</div>
+        <div class="side-count" id="cntEnglish">0/0</div>
+      </div>
 
-  <!-- 美乐蒂状态栏 -->
-  <footer class="melody-bar" id="melodyBar">
-    <div class="melody-avatar" id="melodyAvatar">
-      <svg viewBox="0 0 100 100" class="melody-svg" id="melodySvg">
-        <!-- 耳朵 -->
-        <ellipse cx="28" cy="22" rx="10" ry="14" fill="#6495ED" id="earL"/>
-        <ellipse cx="72" cy="22" rx="10" ry="14" fill="#6495ED" id="earR"/>
-        <!-- 蓝色帽兜 -->
-        <circle cx="50" cy="45" r="30" fill="#4682B4" id="hood"/>
-        <!-- 脸（白色） -->
-        <ellipse cx="50" cy="50" rx="24" ry="22" fill="#fff" id="face"/>
-        <!-- 眼睛 -->
-        <circle cx="38" cy="42" r="3.5" fill="#333" id="eyeL"/>
-        <circle cx="62" cy="42" r="3.5" fill="#333" id="eyeR"/>
-        <circle cx="39" cy="41" r="1.2" fill="#fff"/>
-        <circle cx="63" cy="41" r="1.2" fill="#fff"/>
-        <!-- 鼻子 -->
-        <ellipse cx="50" cy="50" rx="3" ry="2" fill="#FFB6C1"/>
-        <!-- 嘴巴 -->
-        <path d="M44 56 Q50 62 56 56" stroke="#666" stroke-width="2" fill="none" stroke-linecap="round" id="mouth"/>
-        <!-- 腮红 -->
-        <circle cx="34" cy="53" r="5" fill="#FFB6C1" opacity="0.5"/>
-        <circle cx="66" cy="53" r="5" fill="#FFB6C1" opacity="0.5"/>
-      </svg>
+      <div class="side-cat-label">🌱 生活</div>
+      <div class="side-item" data-cat="life">
+        <div class="side-icon" style="background:linear-gradient(135deg,#A6E3A1,#7AC74F)">🏠</div>
+        <div class="side-name">习惯</div>
+        <div class="side-count" id="cntLife">0/0</div>
+      </div>
+
+      <div class="side-cat-label">🏃 运动</div>
+      <div class="side-item" data-cat="sport">
+        <div class="side-icon" style="background:linear-gradient(135deg,#FFA1B5,#FF6B9D)">🏃</div>
+        <div class="side-name">锻炼</div>
+        <div class="side-count" id="cntSport">0/0</div>
+      </div>
+    </nav>
+
+    <!-- 右侧主区 -->
+    <div class="right-area">
+      <!-- 顶部子类目横排 -->
+      <div class="subcat-bar" id="subcatBar"></div>
+      <!-- 内容区 -->
+      <div class="content-area" id="contentArea"></div>
     </div>
-    <div class="melody-info">
-      <div class="melody-status" id="melodyStatus">美乐蒂在等你…</div>
-      <div class="melody-actions" id="melodyActions"></div>
-    </div>
-    <div class="melody-streak-badge" id="streakBadge"></div>
-  </footer>
+  </div>
+
+  <!-- 美乐蒂互动按钮（达标后显示） -->
+  <div class="melody-actions" id="melodyActions" style="display:none">
+    <button class="melody-btn feed" onclick="openFeed()">🍖 喂食</button>
+    <button class="melody-btn bath" onclick="openBath()">🛀 洗澡</button>
+  </div>
 
   <!-- 喂食弹窗 -->
   <div class="modal" id="feedModal">
