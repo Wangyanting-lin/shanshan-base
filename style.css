@@ -275,3 +275,6 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft 
 /* 设置面板 */
 .game-setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed var(--gray-100)}
 .game-setting-val{font-size:16px;font-weight:800;color:var(--purple)}
+
+/* 每日日期条 */
+.daily-date-bar{text-align:center;font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:14px;padding:6px 0;border-bottom:1px dashed var(--gray-100);letter-spacing:0.5px}

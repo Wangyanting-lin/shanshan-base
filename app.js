@@ -5,6 +5,12 @@ var today=function(){return new Date().toISOString().slice(0,10)};
 var loadTask=function(){try{return JSON.parse(localStorage.getItem('task_'+today())||'{}')}catch(e){return{}}};
 var saveTask=function(d){localStorage.setItem('task_'+today(),JSON.stringify(d))};
 
+// ============ 日期驱动工具 ============
+var dayOfYear=function(){var n=new Date();var s=new Date(n.getFullYear(),0,0);return Math.floor((n-s)/(1000*60*60*24))};
+var dayIndex=function(total){return dayOfYear()%total};
+var dailyPick=function(total,n){var seed=dayOfYear();var arr=[];for(var i=0;i<total;i++)arr.push(i);for(var i=0;i<n&&i<total-1;i++){var r=(seed*31+i*7+13)%(total-i)+i;var t=arr[i];arr[i]=arr[r];arr[r]=t;}return arr.slice(0,n)};
+
+
 // ============ 古诗数据 ============
 var POEMS=[
   {title:'望庐山瀑布',author:'[唐] 李白',content:'日照香炉生紫烟，\n遥看瀑布挂前川。\n飞流直下三千尺，\n疑是银河落九天。'},
@@ -15,6 +21,50 @@ var POEMS=[
   {title:'过故人庄',author:'[唐] 孟浩然',content:'故人具鸡黍，\n邀我至田家。\n绿树村边合，\n青山郭外斜。'},
   {title:'望洞庭',author:'[唐] 刘禹锡',content:'湖光秋月两相和，\n潭面无风镜未磨。\n遥望洞庭山水翠，\n白银盘里一青螺。'},
   {title:'忆江南',author:'[唐] 白居易',content:'江南好，\n风景旧曾谙。\n日出江花红胜火，\n春来江水绿如蓝。\n能不忆江南？'},
+
+  {title:'静夜思',author:'[唐] 李白',content:'床前明月光，\n疑是地上霜。\n举头望明月，\n低头思故乡。'},
+  {title:'春晓',author:'[唐] 孟浩然',content:'春眠不觉晓，\n处处闻啼鸟。\n夜来风雨声，\n花落知多少。'},
+  {title:'登鹳雀楼',author:'[唐] 王之涣',content:'白日依山尽，\n黄河入海流。\n欲穷千里目，\n更上一层楼。'},
+  {title:'咏柳',author:'[唐] 贺知章',content:'碧玉妆成一树高，\n万条垂下绿丝绦。\n不知细叶谁裁出，\n二月春风似剪刀。'},
+  {title:'悯农（其一）',author:'[唐] 李绅',content:'春种一粒粟，\n秋收万颗子。\n四海无闲田，\n农夫犹饿死。'},
+  {title:'悯农（其二）',author:'[唐] 李绅',content:'锄禾日当午，\n汗滴禾下土。\n谁知盘中餐，\n粒粒皆辛苦。'},
+  {title:'江雪',author:'[唐] 柳宗元',content:'千山鸟飞绝，\n万径人踪灭。\n孤舟蓑笠翁，\n独钓寒江雪。'},
+  {title:'寻隐者不遇',author:'[唐] 贾岛',content:'松下问童子，\n言师采药去。\n只在此山中，\n云深不知处。'},
+  {title:'山行',author:'[唐] 杜牧',content:'远上寒山石径斜，\n白云生处有人家。\n停车坐爱枫林晚，\n霜叶红于二月花。'},
+  {title:'清明',author:'[唐] 杜牧',content:'清明时节雨纷纷，\n路上行人欲断魂。\n借问酒家何处有，\n牧童遥指杏花村。'},
+  {title:'江南春',author:'[唐] 杜牧',content:'千里莺啼绿映红，\n水村山郭酒旗风。\n南朝四百八十寺，\n多少楼台烟雨中。'},
+  {title:'蜂',author:'[唐] 罗隐',content:'不论平地与山尖，\n无限风光尽被占。\n采得百花成蜜后，\n为谁辛苦为谁甜。'},
+  {title:'江畔独步寻花',author:'[唐] 杜甫',content:'黄四娘家花满蹊，\n千朵万朵压枝低。\n留连戏蝶时时舞，\n自在娇莺恰恰啼。'},
+  {title:'绝句',author:'[唐] 杜甫',content:'两个黄鹂鸣翠柳，\n一行白鹭上青天。\n窗含西岭千秋雪，\n门泊东吴万里船。'},
+  {title:'春夜喜雨',author:'[唐] 杜甫',content:'好雨知时节，\n当春乃发生。\n随风潜入夜，\n润物细无声。'},
+  {title:'早发白帝城',author:'[唐] 李白',content:'朝辞白帝彩云间，\n千里江陵一日还。\n两岸猿声啼不住，\n轻舟已过万重山。'},
+  {title:'望天门山',author:'[唐] 李白',content:'天门中断楚江开，\n碧水东流至此回。\n两岸青山相对出，\n孤帆一片日边来。'},
+  {title:'别董大',author:'[唐] 高适',content:'千里黄云白日曛，\n北风吹雁雪纷纷。\n莫愁前路无知己，\n天下谁人不识君。'},
+  {title:'枫桥夜泊',author:'[唐] 张继',content:'月落乌啼霜满天，\n江枫渔火对愁眠。\n姑苏城外寒山寺，\n夜半钟声到客船。'},
+  {title:'渔歌子',author:'[唐] 张志和',content:'西塞山前白鹭飞，\n桃花流水鳜鱼肥。\n青箬笠，绿蓑衣，\n斜风细雨不须归。'},
+  {title:'浪淘沙',author:'[唐] 刘禹锡',content:'九曲黄河万里沙，\n浪淘风簸自天涯。\n如今直上银河去，\n同到牵牛织女家。'},
+  {title:'江南春',author:'[唐] 杜牧',content:'千里莺啼绿映红，\n水村山郭酒旗风。\n南朝四百八十寺，\n多少楼台烟雨中。'},
+  {title:'元日',author:'[宋] 王安石',content:'爆竹声中一岁除，\n春风送暖入屠苏。\n千门万户曈曈日，\n总把新桃换旧符。'},
+  {title:'泊船瓜洲',author:'[宋] 王安石',content:'京口瓜洲一水间，\n钟山只隔数重山。\n春风又绿江南岸，\n明月何时照我还。'},
+  {title:'饮湖上初晴后雨',author:'[宋] 苏轼',content:'水光潋滟晴方好，\n山色空蒙雨亦奇。\n欲把西湖比西子，\n淡妆浓抹总相宜。'},
+  {title:'惠崇春江晚景',author:'[宋] 苏轼',content:'竹外桃花三两枝，\n春江水暖鸭先知。\n蒌蒿满地芦芽短，\n正是河豚欲上时。'},
+  {title:'夏日绝句',author:'[宋] 李清照',content:'生当作人杰，\n死亦为鬼雄。\n至今思项羽，\n不肯过江东。'},
+  {title:'三衢道中',author:'[宋] 曾几',content:'梅子黄时日日晴，\n小溪泛尽却山行。\n绿阴不减来时路，\n添得黄鹂四五声。'},
+  {title:'示儿',author:'[宋] 陆游',content:'死去元知万事空，\n但悲不见九州同。\n王师北定中原日，\n家祭无忘告乃翁。'},
+  {title:'四时田园杂兴',author:'[宋] 范成大',content:'昼出耘田夜绩麻，\n村庄儿女各当家。\n童孙未解供耕织，\n也傍桑阴学种瓜。'},
+  {title:'小池',author:'[宋] 杨万里',content:'泉眼无声惜细流，\n树阴照水爱晴柔。\n小荷才露尖尖角，\n早有蜻蜓立上头。'},
+  {title:'晓出净慈寺送林子方',author:'[宋] 杨万里',content:'毕竟西湖六月中，\n风光不与四时同。\n接天莲叶无穷碧，\n映日荷花别样红。'},
+  {title:'春日',author:'[宋] 朱熹',content:'胜日寻芳泗水滨，\n无边光景一时新。\n等闲识得东风面，\n万紫千红总是春。'},
+  {title:'观书有感',author:'[宋] 朱熹',content:'半亩方塘一鉴开，\n天光云影共徘徊。\n问渠那得清如许，\n为有源头活水来。'},
+  {title:'题临安邸',author:'[宋] 林升',content:'山外青山楼外楼，\n西湖歌舞几时休。\n暖风熏得游人醉，\n直把杭州作汴州。'},
+  {title:'墨梅',author:'[元] 王冕',content:'吾家洗砚池头树，\n朵朵花开淡墨痕。\n不要人夸好颜色，\n只留清气满乾坤。'},
+  {title:'石灰吟',author:'[明] 于谦',content:'千锤万凿出深山，\n烈火焚烧若等闲。\n粉骨碎身浑不怕，\n要留清白在人间。'},
+  {title:'竹石',author:'[清] 郑燮',content:'咬定青山不放松，\n立根原在破岩中。\n千磨万击还坚劲，\n任尔东西南北风。'},
+  {title:'所见',author:'[清] 袁枚',content:'牧童骑黄牛，\n歌声振林樾。\n意欲捕鸣蝉，\n忽然闭口立。'},
+  {title:'村居',author:'[清] 高鼎',content:'草长莺飞二月天，\n拂堤杨柳醉春烟。\n儿童散学归来早，\n忙趁东风放纸鸢。'},
+  {title:'己亥杂诗',author:'[清] 龚自珍',content:'九州生气恃风雷，\n万马齐喑究可哀。\n我劝天公重抖擞，\n不拘一格降人才。'},
+  {title:'长歌行（节选）',author:'汉乐府',content:'青青园中葵，\n朝露待日晞。\n阳春布德泽，\n万物生光辉。\n常恐秋节至，\n焜黄华叶衰。\n百川东到海，\n何时复西归？\n少壮不努力，\n老大徒伤悲。'},
+  {title:'赠汪伦',author:'[唐] 李白',content:'李白乘舟将欲行，\n忽闻岸上踏歌声。\n桃花潭水深千尺，\n不及汪伦送我情。'},
 ];
 
 // ============ 数学思维导图 ============
@@ -56,7 +106,25 @@ var CONCEPTS=[
   {cat:'运算律',name:'加法交换律',formula:'a+b=b+a',explain:'交换位置和不变'},
   {cat:'运算律',name:'加法结合律',formula:'(a+b)+c=a+(b+c)',explain:'凑整优先组合'},
   {cat:'运算律',name:'乘法分配律',formula:'a×(b+c)=a×b+a×c',explain:'最重要！25×44=1100'},
-  {cat:'统计',name:'条形统计图',formula:'横轴+纵轴+直条',explain:'直条越高数据越大'},
+  {cat:'大数',name:'亿以内数的读法',formula:'先分级，从高位读起',explain:'每级末尾零不读，中间零只读一个'},
+  {cat:'大数',name:'亿以内数的写法',formula:'从高位写起，哪一位上没有写0',explain:'写数也要先分级'},
+  {cat:'大数',name:'比较大小',formula:'位数多的大，位数相同的从高位比',explain:'85300>83500，看高位'},
+  {cat:'大数',name:'改写和省略',formula:'改写成"万"或"亿"',explain:'改写是精确值，省略是近似值'},
+  {cat:'乘法',name:'估算',formula:'把因数看成整十整百数',explain:'298×31≈300×30=9000'},
+  {cat:'乘法',name:'单价×数量=总价',formula:'总价÷数量=单价',explain:'3支笔×5元=15元'},
+  {cat:'乘法',name:'速度×时间=路程',formula:'路程÷速度=时间',explain:'60km/h×3h=180km'},
+  {cat:'除法',name:'除数是两位数的除法',formula:'从被除数高位除起，先看前两位',explain:'432÷18，先看43够除18商2'},
+  {cat:'除法',name:'有余数的除法',formula:'被除数÷除数=商…余数',explain:'余数必须小于除数'},
+  {cat:'线角',name:'直线射线线段',formula:'线段有两个端点，射线一个，直线没有',explain:'线段可测量长度'},
+  {cat:'线角',name:'角的度量',formula:'量角器：中心对顶点，0线对一边',explain:'量角要注意内圈外圈'},
+  {cat:'线角',name:'画角',formula:'画射线→点对齐→连线→标度数',explain:'先画一条射线，再用量角器'},
+  {cat:'线角',name:'平行与垂直',formula:'同一平面内不相交=平行，相交成直角=垂直',explain:'平行线间距离处处相等'},
+  {cat:'运算律',name:'乘法交换律',formula:'a×b=b×a',explain:'4×25=25×4=100'},
+  {cat:'运算律',name:'乘法结合律',formula:'(a×b)×c=a×(b×c)',explain:'(25×4)×3=25×(4×3)=300'},
+  {cat:'运算律',name:'连减的性质',formula:'a-b-c=a-(b+c)',explain:'100-25-35=100-(25+35)=40'},
+  {cat:'运算律',name:'连除的性质',formula:'a÷b÷c=a÷(b×c)',explain:'120÷5÷4=120÷(5×4)=6'},
+  {cat:'统计',name:'平均数',formula:'总数量÷总份数=平均数',explain:'(90+85+95)÷3=90分'},
+  {cat:'统计',name:'复式条形统计图',formula:'用不同颜色区分不同类别',explain:'可以直观比较两组数据'},
 ];
 
 var QUIZ_BASIC=[
@@ -89,7 +157,28 @@ var PITFALLS=[
   {pit:'角的单位漏写',wrong:'∠A=90',right:'∠A=90°',tip:'角的单位是"度(°)"不能漏写'},
   {pit:'商不变规律：忘除',wrong:'800÷200=400÷100=4→写400',right:'800÷200=8÷2=4',tip:'被除数和除数要同时除以同一个数'},
   {pit:'近似数方向搞反',wrong:'548000≈55万',right:'548000≈55万（千位8≥5进1）',tip:'四舍五入看省略位的最高位'},
-  {pit:'0不能做除数',wrong:'5÷0=0',right:'0不能做除数',tip:'0可做被除数，但不能做除数'},
+  {pit:'数位和计数单位混淆',wrong:'个、十、百、千是数位',right:'个、十、百、千是计数单位，个位、十位、百位是数位',tip:'计数单位不带"位"字'},
+  {pit:'读数时漏读零',wrong:'40050060读作四千五万零六十',right:'四千零五万零六十',tip:'每级开头或中间的零要读'},
+  {pit:'改写与省略混淆',wrong:'548000改写成万=55万',right:'改写成万=54.8万，省略万≈55万',tip:'改写要精确，省略看尾数四舍五入'},
+  {pit:'乘法竖式漏乘0',wrong:'304×20=608',right:'304×20=6080',tip:'因数末尾有0，先乘非0部分再补0'},
+  {pit:'乘法中间有0',wrong:'206×14=2844',right:'206×14=2884',tip:'因数中间有0时，乘的时候也要乘0位'},
+  {pit:'乘法分配律漏乘',wrong:'25×(40+4)=25×40+4',right:'=25×40+25×4=1100',tip:'括号外的数要和括号内每个数相乘'},
+  {pit:'除到哪一位商写哪一位',wrong:'432÷18商写在百位',right:'先看前两位43够除，商2写在十位',tip:'除到被除数的哪一位商就写在哪一位上面'},
+  {pit:'商中间有0',wrong:'612÷3=24',right:'612÷3=204',tip:'哪一位不够商1就商0占位'},
+  {pit:'商末尾有0',wrong:'420÷4=15',right:'420÷4=105',tip:'个位不够商1商0占位'},
+  {pit:'被除数除数同时乘',wrong:'600÷25=(600×4)÷25=2400÷25',right:'600÷25=(600×4)÷(25×4)=2400÷100=24',tip:'被除数和除数要同时乘同一个数'},
+  {pit:'直线射线线段混淆',wrong:'直线可以测量长度',right:'直线无限长不可测量，线段可测量',tip:'只有线段有固定长度'},
+  {pit:'角的大小判断',wrong:'边越长角越大',right:'角的大小与边的长短无关，与开口大小有关',tip:'用放大镜看角，角的大小不变'},
+  {pit:'平角是一条直线',wrong:'平角就是一条直线',right:'平角是两条射线组成的角，只是两条边在一条直线上',tip:'角都有顶点和两条边'},
+  {pit:'周角是一条射线',wrong:'周角就是一条射线',right:'周角是角的两边重合，度数为360°',tip:'周角≠0°'},
+  {pit:'加法结合律误用',wrong:'38+75+25=38+(75+25)错写成38+75×25',right:'38+75+25=38+100=138',tip:'注意符号，加号不变'},
+  {pit:'连减忘记变号',wrong:'100-35-25=100-(35-25)=90',right:'=100-(35+25)=40',tip:'连减变减加，括号内变加号'},
+  {pit:'平均数误算',wrong:'全班平均分=(最高分+最低分)÷2',right:'全班平均分=总分÷总人数',tip:'平均数是所有数据的平均'},
+  {pit:'条形图纵轴不从0开始',wrong:'纵轴从30开始画',right:'纵轴一般从0开始，能更真实反映差异',tip:'不从0开始会夸大差异'},
+  {pit:'垂直符号漏标',wrong:'说两条线垂直但没标直角符号',right:'垂直必须标直角符号"┐"',tip:'看到垂直就要想到90°'},
+  {pit:'积的变化规律方向反',wrong:'一个因数×2，积也×2。那因数÷2，积×2',right:'一个因数÷2，积也÷2',tip:'因数怎么变，积就怎么变（另一个因数不变）'},
+  {pit:'0在乘法中的特殊',wrong:'0×任何数=任何数',right:'0×任何数=0',tip:'0乘任何数都得0'},
+  {pit:'1在乘法中的特殊',wrong:'1×任何数=1',right:'1×任何数=任何数',tip:'1乘任何数等于原数'},
 ];
 
 var LIFE_MATH=[
@@ -98,7 +187,30 @@ var LIFE_MATH=[
   {concept:'除法',life:'班上40人去秋游，每辆车坐15人，需要几辆？40÷15=2辆...10人→3辆。"进一法"。',q:'你有100元，每支笔8元，最多买几支？'},
   {concept:'线与角',life:'时钟3:00时针分针成90°直角；6:00成180°平角。剪刀张开是锐角，打开扇子是钝角。',q:'你能在家里找到几个直角？'},
   {concept:'运算律',life:'超市买25包纸巾每包4元+25瓶水每瓶4元=25×4+25×4=200。用乘法分配律25×(4+4)=25×8=200。',q:'用运算律算 4×25+6×25=?'},
-  {concept:'统计',life:'气象站统计一周降雨量画条形图，直条越高雨量越大。你家一周用水量也可以画统计图！',q:'记录你家一周用水量，画个条形图'},
+  {concept:'大数认识',life:'中国人口约14亿，写成1400000000。手机号11位，是亿级的数字。',q:'查一查你所在城市的人口是多少？读出来'},
+  {concept:'大数认识',life:'地球到太阳的距离约149600000千米，读作一亿四千九百六十万千米。',q:'你家到学校多少米？写成用"万"作单位的数'},
+  {concept:'四舍五入',life:'超市标价9.98元≈10元；考试成绩89.5分≈90分。生活中到处是近似数！',q:'你的身高四舍五入到整厘米是多少？'},
+  {concept:'乘法',life:'学校食堂每天做300份午餐，一个月（22天）做多少份？300×22=6600份。',q:'你一周吃几顿饭？一个月呢？'},
+  {concept:'乘法',life:'电影院的座位是25排×30座=750个座位。一场电影满座能卖多少票？',q:'你们班有多少人？全校呢？'},
+  {concept:'乘法估算',life:'买水果：苹果每斤8元，买了19斤，大约8×20=160元。带200元就够了！',q:'估算你一周的零花钱够不够买一个想要的玩具'},
+  {concept:'除法',life:'班费360元买足球，每个足球45元，能买几个？360÷45=8个。',q:'你有200元，每本书38元，最多买几本？'},
+  {concept:'除法',life:'长途汽车432千米路程，每小时行72千米，要几小时？432÷72=6小时。',q:'从家到学校如果骑车，大概要多久？'},
+  {concept:'线与角',life:'打开笔记本电脑屏幕，屏幕和键盘的夹角约110°，是钝角。',q:'你家里能找到几个不同的角？'},
+  {concept:'线与角',life:'踢足球射门时，角度越大越容易进球。最佳射门角度约30-45°。',q:'用量角器量一下剪刀张开的角度'},
+  {concept:'平行与垂直',life:'铁轨是平行的，永远不相交。十字路口的斑马线互相垂直。',q:'你的房间里能找到平行和垂直的线吗？'},
+  {concept:'运算律',life:'买文具：3支笔×5元+3个本×4元=3×(5+4)=27元。乘法分配律帮你速算！',q:'用简便方法算：99×8+8=?（提示：=100×8）'},
+  {concept:'运算律',life:'去超市买东西，可以用加法交换律先算好算的：18+75+25=18+100=118。',q:'用运算律快速算 46+37+54+63'},
+  {concept:'运算律',life:'存钱：每天存25元，存40天=25×40=1000元。用乘法结合律25×4×10=1000。',q:'如果你每天存5元，一年能存多少？'},
+  {concept:'统计',life:'记录一周每天的运动时间，画条形图看看哪天运动最多！',q:'记录一周每天看书的时间并画图'},
+  {concept:'统计',life:'天气预报中的平均气温，就是把每天最高温加起来除以天数。',q:'这周每天最高温是多少？算一下平均'},
+  {concept:'平均数',life:'期末考试语数英三科：92+88+96=276，平均276÷3=92分。',q:'你最近三次小测验的平均分是多少？'},
+  {concept:'面积',life:'你房间长4米宽3米，面积=4×3=12平方米。铺地砖需要知道面积！',q:'量一量你的书桌面积'},
+  {concept:'时间计算',life:'动画片15:30开始，每集25分钟，16:20结束。一共看了几集？',q:'算算从放学到家一共多长时间'},
+  {concept:'单位换算',life:'1吨=1000千克，一头大象约5吨=5000千克。你是多少千克？',q:'把家里能找到的东西重量换算成不同单位'},
+  {concept:'周长',life:'学校操场长100米宽60米，跑一圈=2×(100+60)=320米。',q:'量一量你书桌的周长'},
+  {concept:'大数比较',life:'比较两个城市的人口：北京约2154万，上海约2487万，上海>北京。',q:'比较一下你们班男生和女生的人数'},
+  {concept:'钱的计算',life:'100元买3本书：38+42+25=105元，还差5元！学会预算很重要。',q:'你一周的零花钱够花吗？列个账单'},
+  {concept:'可能性',life:'天气预报说"降水概率70%"，意思是下雨的可能性比较大，最好带伞。',q:'抛硬币10次，记录正面和反面各几次'},
 ];
 
 var LISTENINGS=[
@@ -116,7 +228,20 @@ var WORDS=[
   {unit:'Unit 3',list:[{en:'friend',cn:'朋友'},{en:'tall',cn:'高的'},{en:'short',cn:'矮的/短的'},{en:'strong',cn:'强壮的'},{en:'thin',cn:'瘦的'}]},
   {unit:'Unit 4',list:[{en:'kitchen',cn:'厨房'},{en:'bedroom',cn:'卧室'},{en:'bathroom',cn:'浴室'},{en:'living room',cn:'客厅'},{en:'study',cn:'书房'}]},
   {unit:'Unit 5',list:[{en:'breakfast',cn:'早餐'},{en:'lunch',cn:'午餐'},{en:'dinner',cn:'晚餐'},{en:'rice',cn:'米饭'},{en:'beef',cn:'牛肉'}]},
-  {unit:'Unit 6',list:[{en:'father',cn:'父亲'},{en:'mother',cn:'母亲'},{en:'uncle',cn:'叔叔'},{en:'aunt',cn:'阿姨'},{en:'cousin',cn:'表兄妹'}]},
+  {unit:'Unit 7',list:[{en:'doctor',cn:'医生'},{en:'nurse',cn:'护士'},{en:'teacher',cn:'老师'},{en:'student',cn:'学生'},{en:'driver',cn:'司机'}]},
+  {unit:'Unit 8',list:[{en:'apple',cn:'苹果'},{en:'banana',cn:'香蕉'},{en:'orange',cn:'橙子'},{en:'grape',cn:'葡萄'},{en:'watermelon',cn:'西瓜'}]},
+  {unit:'Unit 9',list:[{en:'cat',cn:'猫'},{en:'dog',cn:'狗'},{en:'bird',cn:'鸟'},{en:'fish',cn:'鱼'},{en:'rabbit',cn:'兔子'}]},
+  {unit:'Unit 10',list:[{en:'red',cn:'红色'},{en:'blue',cn:'蓝色'},{en:'green',cn:'绿色'},{en:'yellow',cn:'黄色'},{en:'white',cn:'白色'}]},
+  {unit:'Unit 11',list:[{en:'big',cn:'大的'},{en:'small',cn:'小的'},{en:'long',cn:'长的'},{en:'short',cn:'短的'},{en:'new',cn:'新的'}]},
+  {unit:'Unit 12',list:[{en:'run',cn:'跑'},{en:'jump',cn:'跳'},{en:'swim',cn:'游泳'},{en:'fly',cn:'飞'},{en:'walk',cn:'走'}]},
+  {unit:'Unit 13',list:[{en:'happy',cn:'开心的'},{en:'sad',cn:'难过的'},{en:'angry',cn:'生气的'},{en:'tired',cn:'累的'},{en:'hungry',cn:'饿的'}]},
+  {unit:'Unit 14',list:[{en:'head',cn:'头'},{en:'hand',cn:'手'},{en:'foot',cn:'脚'},{en:'eye',cn:'眼睛'},{en:'ear',cn:'耳朵'}]},
+  {unit:'Unit 15',list:[{en:'spring',cn:'春天'},{en:'summer',cn:'夏天'},{en:'autumn',cn:'秋天'},{en:'winter',cn:'冬天'},{en:'season',cn:'季节'}]},
+  {unit:'Unit 16',list:[{en:'Monday',cn:'星期一'},{en:'Tuesday',cn:'星期二'},{en:'Wednesday',cn:'星期三'},{en:'Thursday',cn:'星期四'},{en:'Friday',cn:'星期五'}]},
+  {unit:'Unit 17',list:[{en:'sunny',cn:'晴天'},{en:'rainy',cn:'下雨'},{en:'cloudy',cn:'多云'},{en:'windy',cn:'刮风'},{en:'snowy',cn:'下雪'}]},
+  {unit:'Unit 18',list:[{en:'pencil',cn:'铅笔'},{en:'ruler',cn:'尺子'},{en:'eraser',cn:'橡皮'},{en:'crayon',cn:'蜡笔'},{en:'scissors',cn:'剪刀'}]},
+  {unit:'Unit 19',list:[{en:'breakfast',cn:'早餐'},{en:'lunch',cn:'午餐'},{en:'dinner',cn:'晚餐'},{en:'rice',cn:'米饭'},{en:'noodle',cn:'面条'}]},
+  {unit:'Unit 20',list:[{en:'one',cn:'一'},{en:'two',cn:'二'},{en:'three',cn:'三'},{en:'four',cn:'四'},{en:'five',cn:'五'}]},
 ];
 
 var GRAMMARS=[
@@ -129,17 +254,66 @@ var GRAMMARS=[
   {title:'物主代词',rule:'my/your/his/her/our/their + 名词',example:'This is my book. / Her name is Lily.'},
   {title:'背单词技巧1',rule:'自然拼读法：按发音记忆',example:'cat=c+a+t /kæt/'},
   {title:'背单词技巧2',rule:'词根词缀法：前缀un-表否定，-er表人',example:'happy→unhappy; teach→teacher'},
-  {title:'背单词技巧3',rule:'联想记忆法：画面联想',example:'eye=两只眼睛(e)中间一个鼻子(y)'},
+  {title:'背单词技巧4',rule:'分类记忆法：按主题归类',example:'水果：apple, banana, orange, grape'},
+  {title:'背单词技巧5',rule:'反义词对照法',example:'big↔small, hot↔cold, happy↔sad'},
+  {title:'have/has用法',rule:'三单用has，其他人称用have',example:'She has a book. / They have books.'},
+  {title:'there be句型',rule:'There is+单数；There are+复数',example:'There is a desk. / There are chairs.'},
+  {title:'祈使句',rule:'动词原形开头，无主语',example:"Open the door. / Don't run!"},
+  {title:'情态动词can',rule:'can+动词原形，无人称变化',example:'I can swim. / Can you help me?'},
+  {title:'人称代词',rule:'主格(I/you/he/she/it/we/they)做主语',example:'He is tall. / We are friends.'},
+  {title:'宾格代词',rule:'宾格(me/you/him/her/it/us/them)做宾语',example:'Give me a book. / I like her.'},
+  {title:'形容词比较级',rule:'+er；以e结尾+r；双写+er',example:'tall→taller; nice→nicer; big→bigger'},
+  {title:'形容词最高级',rule:'+est；以e结尾+st；双写+est',example:'tall→tallest; nice→nicest; big→biggest'},
+  {title:'现在进行时(2)',rule:'动词ing变化规则：去e+ing，双写+ing',example:'make→making; run→running'},
+  {title:'一般将来时',rule:'will+动词原形 / be going to+动词原形',example:'I will go. / She is going to read.'},
+  {title:'一般过去时',rule:'动词+ed；不规则变化需记忆',example:'play→played; go→went; see→saw'},
+  {title:'介词on/in/at',rule:'on用于具体某天，in用于月/季/年，at用于时刻',example:'on Monday; in July; at 8:00'},
+  {title:'介词方位',rule:'in在里, on在上, under在下, behind在后, next to在旁',example:'The book is on the desk.'},
+  {title:'some和any',rule:'some用于肯定句，any用于否定/疑问句',example:'I have some books. / Do you have any books?'},
+  {title:'a和an',rule:'a+辅音开头；an+元音(a/e/i/o/u)开头',example:'a book; an apple; an hour'},
+  {title:'What time/When',rule:'What time问具体时间；When问大致时间',example:'What time is it? / When is your birthday?'},
+  {title:'How many/How much',rule:'How many+可数名词；How much+不可数名词',example:'How many books? / How much water?'},
+  {title:"Let's句型",rule:"Let's+动词原形，表建议",example:"Let's go to school."},
+  {title:'Would like句型',rule:'would like+名词/to do，表想要',example:'I would like some milk. / Would you like to come?'},
+  {title:'感叹句',rule:'What+(a/an)+形容词+名词! / How+形容词!',example:'What a big house! / How beautiful!'},
+  {title:'时间表达法',rule:"整点o'clock；半点half past；过past；差to",example:'7:30=half past seven; 7:45=a quarter to eight'},
+  {title:'序数词',rule:'基变序口诀：一二三特殊记，th从四起',example:'one→first; two→second; three→third; four→fourth'},
+  {title:'频度副词',rule:'always>usually>often>sometimes>never',example:'I always get up at 7.'},
+  {title:'连词and/but/or',rule:'and并列，but转折，or选择',example:'I like apples and bananas. / He is short but strong.'},
+  {title:'like用法',rule:'like+名词/doing/to do',example:'I like apples. / I like swimming. / I like to swim.'},
+  {title:'want用法',rule:'want+名词/to do',example:'I want a book. / I want to play.'},
+  {title:'help用法',rule:'help sb (to) do sth',example:'I help my mother (to) clean.'},
+  {title:'发音规则：字母组合',rule:'th发音：this(ð) vs think(θ)',example:'the, this, that (ð) / three, think, thank (θ)'},
 ];
 
-var EXPRESS=[
-  {type:'每日一读',content:'小松鼠秋天忙着收集松果。它每天跑来跑去，把松果藏在地洞里。冬天来了，大雪盖住了地面。小松鼠在温暖的窝里，吃着松果，开心地笑了。\n\n问1：小松鼠秋天在做什么？\n问2：它为什么冬天不愁吃的？\n问3：这个故事告诉我们什么道理？',hint:'用"先…然后…最后…"复述故事'},
+var EXPRESS=[  {type:'每日一读',content:'小松鼠秋天忙着收集松果。它每天跑来跑去，把松果藏在地洞里。冬天来了，大雪盖住了地面。小松鼠在温暖的窝里，吃着松果，开心地笑了。\n\n问1：小松鼠秋天在做什么？\n问2：它为什么冬天不愁吃的？\n问3：这个故事告诉我们什么道理？',hint:'用"先…然后…最后…"复述故事'},
   {type:'看图说话',content:'想象你看到一幅画：一个小女孩在公园里放风筝，旁边有她的妈妈在微笑。\n\n请描述这幅画：谁在哪里做什么？心情怎样？用至少3句话。',hint:'用"有…""正在…""开心地…"等词'},
   {type:'复述训练',content:'读一遍这段话，然后不看屏幕，复述出来：\n\n春天来了，燕子从南方飞回来了。柳树发出了嫩芽，小草从土里钻出来。孩子们脱下棉袄，跑到草地上放风筝。',hint:'记住关键词：燕子、柳树、小草、孩子、风筝'},
   {type:'词语接龙',content:'用"开心"开头，每个词的最后一个字是下一个词的第一个字。\n\n开心→心情→(  )→(  )→(  )\n\n写出至少4个词！',hint:'心情→情况→况且→且说…'},
   {type:'扩句游戏',content:'把短句变长句！\n\n基础句："小鸟飞。"\n\n加"在哪里"→"小鸟在天上飞。"\n再加"什么时候"→"(  )小鸟在天上(  )飞。"\n继续加"怎样飞"→完整句：',hint:'越详细越好！'},
-  {type:'表达挑战',content:'今天发生了什么有趣的事？用5句话写下来。要求：有时间、地点、人物、经过、感受。',hint:'可以写学校的事、家里的事、和朋友的事'},
-];
+  {type:'每日一读',content:'森林里住着一只小刺猬。一天，它出门采果子，路上遇到了小兔子。小兔子说："你的刺真可怕！"小刺猬难过地走开了。后来，大灰狼来了，小刺猬缩成一团，用刺保护了小兔子。小兔子红着脸说："谢谢你，你的刺真有用！"\n问1：小兔子一开始为什么不喜欢小刺猬？\n问2：小刺猬怎么保护了小兔子？\n问3：这个故事告诉我们什么？',hint:'每个人都有自己的特点，看似缺点的也可能是优点'},
+  {type:'看图说话',content:'想象一幅画：雨后，一道彩虹挂在天空。一个小男孩和小女孩站在草地上，指着彩虹在说话。\n请描述：天气怎么样？谁在做什么？他们可能在说什么？用至少4句话。',hint:'用"雨过天晴""五颜六色""弯弯的"等词'},
+  {type:'复述训练',content:'读一遍然后复述：\n小狗阿黄最喜欢追蝴蝶。一天，一只花蝴蝶飞过篱笆，阿黄追了过去，不小心掉进了小水坑。它浑身湿透了，狼狈地爬出来。蝴蝶停在花朵上，好像在对它说："下次小心点哦！"',hint:'记住：阿黄→追蝴蝶→掉水坑→爬出来→蝴蝶说话'},
+  {type:'词语接龙',content:'用"春天"开头：\n春天→天气→(  )→(  )→(  )→(  )\n写出至少5个词！',hint:'天气→气球→球拍→拍手→手心…'},
+  {type:'扩句游戏',content:'把句子变长！\n基础句："花开了。"\n加"什么花"→"(  )花开了。"\n加"在哪里"→"(  )花在(  )开了。"\n加"怎样开"→完整句：',hint:'比如：粉红色的桃花在春风中悄悄地开了'},
+  {type:'仿写句子',content:'例句：弯弯的月亮像小船。\n请仿写：\n1. 圆圆的太阳像(  )。\n2. 闪闪的星星像(  )。\n3. 白白的云朵像(  )。',hint:'发挥想象力，用比喻！'},
+  {type:'每日一读',content:'大象伯伯开了一家水果店。第一天，小猴来买香蕉，大象伯伯多给了两根。第二天，小松鼠来买松果，大象伯伯也多给了一把。大家都说大象伯伯最善良。大象伯伯笑着说："分享让我更快乐！"\n问1：大象伯伯开的是什么店？\n问2：大象伯伯为什么多给水果？\n问3：你从中学到了什么？',hint:'善良和分享能带来真正的快乐'},
+  {type:'看图说话',content:'想象：冬天，一个小朋友在堆雪人。雪人有胡萝卜鼻子、石子眼睛、树枝手臂。小朋友围着围巾，开心地站在雪人旁边。\n请描述这幅画，至少4句话。',hint:'用"大雪纷飞""白茫茫""圆滚滚"等词'},
+  {type:'复述训练',content:'读一遍然后复述：\n今天是小明的生日。妈妈做了一个大蛋糕，上面插了10根蜡烛。小明许了一个愿，一口气吹灭了所有蜡烛。朋友们唱起了生日歌。小明说："这是我最开心的一天！"',hint:'记住：生日→蛋糕→蜡烛→许愿→吹蜡烛→唱歌'},
+  {type:'词语接龙',content:'用"快乐"开头：\n快乐→乐趣→(  )→(  )→(  )→(  )\n写出至少5个词！',hint:'乐趣→趣味→味道→道理→理由…'},
+  {type:'扩句游戏',content:'把句子变丰富！\n基础句："妈妈做饭。"\n加"什么时候"→"(  )，妈妈(  )做饭。"\n加"在哪里"→"(  )，妈妈在(  )做饭。"\n加"怎么做/什么菜"→完整句：',hint:'比如：傍晚，妈妈在厨房里忙碌地做红烧排骨'},
+  {type:'仿写句子',content:'例句：春天来了，小草从土里钻出来。\n请仿写：\n1. 夏天来了，(  )。\n2. 秋天来了，(  )。\n3. 冬天来了，(  )。',hint:'想想每个季节有什么特点！'},
+  {type:'每日一读',content:'乌鸦喝水的故事大家都听过吧？聪明的乌鸦把石子一颗颗放进瓶子里，水慢慢升高，乌鸦就喝到水了。这个故事告诉我们，遇到困难不要放弃，动脑筋想办法，总能解决问题。\n问1：乌鸦遇到了什么困难？\n问2：乌鸦是怎么解决问题的？\n问3：你遇到过类似的困难吗？怎么解决的？',hint:'遇到困难→想办法→动手尝试→成功！'},
+  {type:'看图说话',content:'想象：教室里有老师和同学们。老师站在讲台上，同学们举手回答问题。黑板上写着数学题。\n请描述：这是哪里？谁在做什么？你最喜欢什么课？用至少4句话。',hint:'用"认真""积极""争先恐后"等词'},
+  {type:'复述训练',content:'读一遍然后复述：\n森林音乐会开始了！百灵鸟唱了一首动听的歌，青蛙打起鼓来，蟋蟀拉着小提琴。萤火虫在空中飞舞，像一颗颗小星星。所有小动物都陶醉在美妙的音乐中。',hint:'记住：百灵鸟唱歌→青蛙打鼓→蟋蟀拉琴→萤火虫飞舞→大家陶醉'},
+  {type:'扩句游戏',content:'把句子变生动！\n基础句："风吹过。"\n加"什么风"→"(  )风吹过。"\n加"吹过哪里"→"(  )风吹过(  )。"\n加"带来了什么感觉"→完整句：',hint:'比如：温暖的春风吹过田野，带来了花草的清香'},
+  {type:'仿写句子',content:'例句：如果我是小鸟，我就在天空自由飞翔。\n请仿写：\n1. 如果我是(  )，我就(  )。\n2. 如果我是(  )，我就(  )。\n3. 如果我是(  )，我就(  )。',hint:'大胆想象！可以是大树、小鱼、星星…'},
+  {type:'每日一读',content:'小蜗牛问妈妈："为什么我们生下来就要背这个又重又硬的壳呢？"妈妈说："因为我们的身体没有骨骼支撑，爬得又慢，所以需要壳来保护自己。"小蜗牛又问："毛虫姐姐也没有骨骼，为什么不用背壳？"妈妈笑着说："因为毛虫姐姐会变成蝴蝶，天空会保护她呀。"\n问1：蜗牛为什么背着壳？\n问2：毛虫为什么不背壳？\n问3：这个故事让你明白了什么？',hint:'每个人都有不同的保护方式，不用羡慕别人'},
+  {type:'看图说话',content:'想象：沙滩上，一家人正在玩耍。爸爸在堆沙堡，妈妈在晒太阳，小朋友在捡贝壳。海浪轻轻地拍打着沙滩。\n请描述这幅画，至少4句话。',hint:'用"金黄色的沙滩""一望无际的大海""五颜六色的贝壳"'},
+  {type:'复述训练',content:'读一遍然后复述：\n小蚂蚁发现了一块大面包屑。它想搬回家，可是太大了搬不动。它跑回去叫来了一群小伙伴。大家齐心协力，喊着口号："一二一，一二一！"终于把面包屑搬回了家。蚂蚁妈妈表扬了大家。',hint:'记住：发现面包→搬不动→叫伙伴→齐心协力→搬回家→被表扬'},
+  {type:'词语接龙',content:'用"学习"开头：\n学习→习惯→(  )→(  )→(  )→(  )\n写出至少5个词！',hint:'习惯→惯性→性格→格局→局面…'},
+  {type:'扩句游戏',content:'把句子写具体！\n基础句："下雨了。"\n加"什么样的雨"→"下(  )雨了。"\n加"什么时候/在哪里"→"(  )，下起了(  )雨。"\n加"感受"→完整句：',hint:'比如：傍晚，天空突然下起了倾盆大雨，哗啦啦的雨声像在演奏交响乐'},
+  {type:'仿写句子',content:'例句：读书使人充实，讨论使人机智，写作使人精确。\n请仿写：\n1. (  )使人(  )，(  )使人(  )，(  )使人(  )。\n（提示：运动/快乐/思考/智慧/分享/幸福…）',hint:'用排比句式，三个分句结构相同'},];
 
 var LIFE_TASKS=[
   {id:'brush_morning',name:'早上刷牙',icon:'🌅'},
@@ -194,6 +368,75 @@ var GOOD_WORDS=[
   {grade:'六年级',source:'《老人与海鸥》',words:['肃立不动','盘旋','翻飞','瞻仰'],sentence:'海鸥们急速扇动翅膀，轮流飞到老人遗像前的空中，像是前来瞻仰遗容的亲属。',analysis:'"肃立""瞻仰"等词赋予海鸥人的情感和礼仪，感人至深；人与动物之间的深厚情谊跃然纸上。'},
   {grade:'六年级',source:'《少年闰土》',words:['一望无际','明晃晃','伶俐','希奇'],sentence:'深蓝的天空中挂着一轮金黄的圆月，下面是海边的沙地，都种着一望无际的碧绿的西瓜。',analysis:'色彩描写层次分明（深蓝→金黄→碧绿）；"一望无际"营造开阔意境，奠定全文怀念基调。'},
   {grade:'六年级',source:'《匆匆》',words:['头涔涔','泪潸潸','伶伶俐俐','茫茫然'],sentence:'燕子去了，有再来的时候；杨柳枯了，有再青的时候；桃花谢了，有再开的时候。但是，聪明的，你告诉我，我们的日子为什么一去不复返呢？',analysis:'排比+对比手法突出时光的不可逆；"头涔涔""泪潸潸"叠词表达对时间流逝的焦虑与无奈。'},
+  {grade:'五年级',source:'《"精彩极了"和"糟糕透了"》',words:['迫不及待','得意扬扬','一如既往','谨慎'],sentence:'我既腼腆又得意扬扬，点头告诉她这首诗确实是我写的。',analysis:'"迫不及待""得意扬扬"写出孩子渴望被认可的心情；两种评价对比揭示不同的爱。'},
+  {grade:'五年级',source:'《钓鱼的启示》',words:['小心翼翼','剧烈','皎洁','抉择'],sentence:'我小心翼翼地一收一放，熟练地操纵着。也许是鱼想摆脱我的鱼钩，不停地甩动着鱼尾并跳跃着。',analysis:'"小心翼翼""一收一放"生动写出钓鱼时的紧张与技巧；动词的精准运用增强画面感。'},
+  {grade:'五年级',source:'《梅花魂》',words:['眷恋','漂泊','骨气','低头折节'],sentence:'多少年过去了，我每次看到外祖父珍藏的这幅梅花图和给我的手绢，就想到这不只是花，而且是身在异国的华侨老人一颗眷恋祖国的心。',analysis:'"眷恋""漂泊"写出海外游子的思乡之情；以梅花喻人，借物抒怀。'},
+  {grade:'五年级',source:'《窃读记》',words:['饥肠辘辘','贪婪','暗喜','咽了一口唾沫'],sentence:'我很快乐，也很惧怕——这种窃读的滋味！',analysis:'"快乐"与"惧怕"的矛盾心理真实动人；"饥肠辘辘""贪婪"写出对知识的渴望。'},
+  {grade:'五年级',source:'《鲸》',words:['宽敞','锋利','凶猛','潜水'],sentence:'鲸的身子这么大，它们吃什么呢？须鲸主要吃虾和小鱼。齿鲸主要吃大鱼和海兽。',analysis:'说明文语言准确严谨；分类别、作比较的说明方法使内容条理清晰。'},
+  {grade:'六年级',source:'《詹天佑》',words:['阻挠','要挟','毅然','精密'],sentence:'詹天佑不怕困难，也不怕嘲笑，毅然接受了任务，马上开始勘测线路。',analysis:'"毅然"一词写出詹天佑的果断与担当；"精密"体现工程师的严谨态度。'},
+  {grade:'六年级',source:'《怀念母亲》',words:['真挚','凄凉','思潮起伏','可见一斑'],sentence:'我痛哭了几天，食不下咽，寝不安席。我真想随母亲于地下。',analysis:'"食不下咽""寝不安席"用简洁的语言写出丧母之痛；感情真挚，令人动容。'},
+  {grade:'六年级',source:'《穷人》',words:['寒风呼啸','汹涌澎湃','忐忑不安','喃喃'],sentence:'她忐忑不安地想："他会说什么呢？这是闹着玩的吗？自己的五个孩子已经够他受的了……"',analysis:'心理描写细腻真实；省略号的使用表现桑娜内心的矛盾与不安。'},
+  {grade:'六年级',source:'《唯一的听众》',words:['神圣','沮丧','难以置信','珍藏'],sentence:'我想你一定拉得非常好，可惜我的耳朵聋了。如果不介意我在场，请继续吧。',analysis:'善意的谎言充满温暖；"神圣""珍藏"写出老人的鼓励对"我"的深远影响。'},
+  {grade:'六年级',source:'《这片土地是神圣的》',words:['潺潺','回荡','眷恋','善待'],sentence:'我们深知：大地不属于人类，而人类是属于大地的。',analysis:'哲理句收束全文，发人深省；排比和反复增强演讲的感染力。'},
+  {grade:'六年级',source:'《我的伯父鲁迅先生》',words:['恍然大悟','饱经风霜','张冠李戴','囫囵吞枣'],sentence:'伯父摸着胡子，笑了笑，说："哈哈！还是我的记性好。"听了伯父这句话，我又羞愧，又悔恨，比挨打挨骂还难受。',analysis:'"羞愧""悔恨"写出内心触动；伯父的幽默含蓄体现鲁迅的教育智慧。'},
+  {grade:'六年级',source:'《月光曲》',words:['微波粼粼','波涛汹涌','陶醉','清幽'],sentence:'皮鞋匠静静地听着。他好像面对着大海，月亮正从水天相接的地方升起来。微波粼粼的海面上，霎时间洒满了银光。',analysis:'用联觉手法将音乐转化为画面；"微波粼粼→波涛汹涌"展现音乐的起伏变化。'},
+  {grade:'六年级',source:'《用心灵去倾听》',words:['耐心','温柔','倾听','永远'],sentence:'她总是微笑着，耐心地回答我提出的各种各样奇怪的问题。',analysis:'"耐心""温柔""微笑"勾勒出一个温暖的形象；倾听是最美的陪伴。'},
+  {grade:'六年级',source:'《只有一个地球》',words:['晶莹','渺小','有限','慷慨'],sentence:'地球，这位人类的母亲，这个生命的摇篮，是那样美丽壮观，和蔼可亲。',analysis:'比喻和拟人手法赋予地球生命；"晶莹""渺小"对比强烈，唤起保护意识。'},
+  {grade:'一年级',source:'《画》',words:['远看','近听','春去','人来'],sentence:'远看山有色，近听水无声。春去花还在，人来鸟不惊。',analysis:'对仗工整，每句含一个反常规的发现；谜语诗的形式激发好奇心。'},
+  {grade:'一年级',source:'《阳光》',words:['温暖','金色','洒满','宝贵'],sentence:'阳光像金子，洒遍田野、高山和小河。田里的禾苗，因为有了阳光，更绿了。',analysis:'比喻"阳光像金子"突出阳光的珍贵；排比写出阳光的慷慨无私。'},
+  {grade:'一年级',source:'《影子》',words:['常常','跟着','朋友','小黑狗'],sentence:'影子在前，影子在后，影子常常跟着我，就像一条小黑狗。',analysis:'把影子比作"小黑狗"，活泼有趣；方向词"前后左右"帮助建立空间概念。'},
+  {grade:'二年级',source:'《植物妈妈有办法》',words:['准备','旅行','纷纷','四海为家'],sentence:'蒲公英妈妈准备了降落伞，把它送给自己的娃娃。只要有风轻轻吹过，孩子们就乘着风纷纷出发。',analysis:'拟人手法赋予植物人的行为；"降落伞""纷纷出发"想象力丰富。'},
+  {grade:'二年级',source:'《一株紫丁香》',words:['安静','笑脸','牵挂','梦乡'],sentence:'夜深了，星星困得眨眼，老师，休息吧，让花香飘进您的梦里，那梦啊，准是又香又甜。',analysis:'用"星星困得眨眼"烘托夜深；"又香又甜"写梦，通感手法巧妙。'},
+  {grade:'二年级',source:'《称赞》',words:['称赞','自信','消除','疲劳'],sentence:'你的称赞消除了我一天的疲劳！',analysis:'一句话点明主题；"称赞"的力量被具象化为"消除疲劳"。'},
+  {grade:'二年级',source:'《纸船和风筝》',words:['飘荡','漂流','快乐','幸福'],sentence:'纸船和风筝让他们俩成了好朋友。',analysis:'简单的句子蕴含深刻的道理——沟通和包容可以架起友谊的桥梁。'},
+  {grade:'三年级',source:'《秋天的雨》',words:['温柔','凉爽','丰收','五彩缤纷'],sentence:'秋天的雨，是一把钥匙。它带着清凉和温柔，轻轻地，轻轻地，趁你没留意，把秋天的大门打开了。',analysis:'把秋雨比作"钥匙"，意象新颖；"轻轻地轻轻地"叠词营造温柔氛围。'},
+  {grade:'三年级',source:'《花钟》',words:['争奇斗艳','芬芳迷人','欣然怒放','苏醒'],sentence:'凌晨四点，牵牛花吹起了紫色的小喇叭；五点左右，艳丽的蔷薇绽开了笑脸。',analysis:'按时间顺序描写花开；每种花用不同动词（吹起、绽开、醒来）避免重复。'},
+  {grade:'三年级',source:'《赵州桥》',words:['雄伟','坚固','美观','创举'],sentence:'这座桥不但坚固，而且美观。',analysis:'过渡句承上启下；"不但……而且……"递进关系突出赵州桥的两大特点。'},
+  {grade:'三年级',source:'《荷花》',words:['清香','挨挨挤挤','饱胀','翩翩起舞'],sentence:'我忽然觉得自己仿佛就是一朵荷花，穿着雪白的衣裳，站在阳光里。',analysis:'将自己融入荷花，物我两忘；"翩翩起舞"把静态的荷花写活了。'},
+  {grade:'四年级',source:'《桂林山水》',words:['波澜壮阔','水平如镜','峰峦雄伟','危峰兀立'],sentence:'漓江的水真静啊，静得让你感觉不到它在流动；漓江的水真清啊，清得可以看见江底的沙石。',analysis:'排比+感叹句层层递进写出漓江的"静、清、绿"；"真……啊"句式增强感染力。'},
+  {grade:'四年级',source:'《记金华的双龙洞》',words:['突兀森郁','蜿蜒','变化多端','颜色各异'],sentence:'这些石钟乳和石笋，形状变化多端，再加上颜色各异，即使不比做什么，也很值得观赏。',analysis:'"即使……也……"让步句式强调洞穴本身的美丽，不需借助想象。'},
+  {grade:'四年级',source:'《乡下人家》',words:['独特','迷人','和谐','自然'],sentence:'乡下人家，不论什么时候，不论什么季节，都有一道独特、迷人的风景。',analysis:'"不论……不论……都……"排比强调乡下风光四季皆美；首尾呼应。'},
+  {grade:'四年级',source:'《生命 生命》',words:['震惊','挣扎','珍惜','光彩'],sentence:'虽然生命短暂，但是，我们却可以让有限的生命体现出无限的价值。',analysis:'"有限"与"无限"形成鲜明对比；"虽然……但是……"转折表达积极人生态度。'},
+  {grade:'五年级',source:'《珍珠鸟》',words:['舒适','温暖','信赖','美好'],sentence:'信赖，往往创造出美好的境界。',analysis:'一句点睛，升华全文；简洁有力，余味悠长。'},
+  {grade:'五年级',source:'《地震中的父与子》',words:['废墟','绝望','挖掘','了不起'],sentence:'他挖了8小时，12小时，24小时，36小时，没人再来阻挡他。',analysis:'时间数字的递增写出父亲的执着与父爱的伟大；重复"小时"增强节奏感。'},
+  {grade:'五年级',source:'《学会看病》',words:['磨炼','埋怨','勇气','成长'],sentence:'孩子，不要埋怨我在你生病时的冷漠。总有一天，你要离我远去，独自面对生活。',analysis:'母亲的内心独白揭示"放手"的爱；语言质朴却感人至深。'},
+  {grade:'六年级',source:'《顶碗少年》',words:['惊羡','不失风度','拼搏','成功'],sentence:'在以后的岁月里，不知怎的，我常常会想起这位顶碗少年，想起他那一次的演出。',analysis:'首尾呼应；"常常会想起"暗示那次失败带来的深远影响。'},
+  {grade:'六年级',source:'《十六年前的回忆》',words:['慈祥','含糊','严峻','沉着'],sentence:'父亲是很慈祥的，从来没骂过我们，更没打过我们。我总爱向父亲问许多幼稚可笑的问题。',analysis:'"慈祥""幼稚可笑"对比写出父女亲情；朴素的语言中蕴含深情。'},
+  {grade:'六年级',source:'《为人民服务》',words:['重于泰山','轻于鸿毛','精兵简政','死得其所'],sentence:'人固有一死，或重于泰山，或轻于鸿毛。',analysis:'引用司马迁名言增强说服力；对比手法鲜明有力。'},
+  {grade:'一年级',source:'《比尾巴》',words:['好看','弯弯','扁扁','最好看'],sentence:'谁的尾巴长？谁的尾巴短？谁的尾巴好像一把伞？',analysis:'问答形式活泼有趣；"好像一把伞"比喻形象生动。'},
+  {grade:'二年级',source:'《雷雨》',words:['满天','黑沉沉','清新','迎面扑来'],sentence:'满天的乌云，黑沉沉地压下来。树上的叶子一动不动，蝉一声也不叫。',analysis:'"压"字写出乌云的厚重；环境描写（叶不动、蝉不叫）烘托暴雨前的压抑。'},
+  {grade:'二年级',source:'《最大的"书"》',words:['刨根问底','脚印','波痕','宝藏'],sentence:'岩石就是书啊！你看，这岩石一层一层的，不就像一册厚厚的书吗？',analysis:'把岩石比作"书"，角度新颖；反问句和感叹句增强表达效果。'},
+  {grade:'三年级',source:'《蜜蜂》',words:['辨认','无论','准确无误','本能'],sentence:'听说蜜蜂有辨认方向的能力，无论飞到哪里，它总是可以回到原处。',analysis:'"无论……总是……"强调蜜蜂的本能之强；科学实验的态度严谨可信。'},
+  {grade:'三年级',source:'《玩出了名堂》',words:['浪费','看守','放大','发现'],sentence:'玩耍常常被认为是浪费时间的行为，但在科学史上，有许多伟大的发现是在玩耍中产生的。',analysis:'转折句引出新观点；"玩耍"与"发现"的对比激发探索兴趣。'},
+  {grade:'四年级',source:'《牧场之国》',words:['极目远眺','悠然自得','辽阔无垠','默默无言'],sentence:'荷兰，是水之国，花之国，也是牧场之国。',analysis:'排比句式概括荷兰特点；"也是"递进引出本文主题。'},
+  {grade:'四年级',source:'《鱼游到了纸上》',words:['清澈','赏心悦目','工笔细描','挥笔速写'],sentence:'他有时工笔细描，把金鱼的每个部位一丝不苟地画下来；有时又挥笔速写，很快地画出金鱼的动态。',analysis:'"有时……有时……"对比两种画法；"一丝不苟"体现专注。'},
+  {grade:'五年级',source:'《新型玻璃》',words:['安然无恙','藕断丝连','盗窃','制服'],sentence:'它非常坚硬，受到猛击仍安然无恙；即使被打碎了，碎片仍然藕断丝连地粘在一起。',analysis:'"安然无恙""藕断丝连"成语准确生动；说明文语言科学严谨。'},
+  {grade:'五年级',source:'《松鼠》',words:['乖巧','驯良','矫健','玲珑'],sentence:'它们面容清秀，眼睛闪闪有光，身体矫健，四肢轻快，非常敏捷，非常机警。',analysis:'外貌描写从面到点，层次分明；"矫健""敏捷""机警"用词精准。'},
+  {grade:'六年级',source:'《学弈》',words:['专心致志','一心以为','鸿鹄','弗若'],sentence:'其一人专心致志，惟弈秋之为听；一人虽听之，一心以为有鸿鹄将至，思援弓缴而射之。',analysis:'对比手法突出专心与分心的不同结果；文言文简洁有力。'},
+  {grade:'六年级',source:'《两小儿辩日》',words:['辩斗','探汤','沧沧凉凉','多知乎'],sentence:'日初出沧沧凉凉，及其日中如探汤，此不为近者热而远者凉乎？',analysis:'对话体辩论逻辑清晰；比喻"如探汤"形象生动。'},
+  {grade:'一年级',source:'《小熊住山洞》',words:['舍不得','春天','夏天','秋天'],sentence:'春天，树上长满了绿叶，小熊舍不得砍。秋天，树上结满了果子，小熊舍不得砍。',analysis:'反复"舍不得"层层递进，表现小熊的善良；四季顺序推进故事。'},
+  {grade:'二年级',source:'《丑小鸭》',words:['羡慕','孤单','惊奇','幸福'],sentence:'他感到太幸福了，但他一点也不骄傲，因为一颗好的心是永远不会骄傲的。',analysis:'"幸福"与"不骄傲"对比写出美好品格；以哲理句收尾。'},
+  {grade:'二年级',source:'《数星星的孩子》',words:['一闪一闪','数不清','著名','刻苦钻研'],sentence:'晚上，满天的星星像无数珍珠撒在碧玉盘里。',analysis:'比喻"星星像珍珠""天空像碧玉盘"，画面感极强。'},
+  {grade:'三年级',source:'《盘古开天地》',words:['混沌','缓缓','辽阔','创造'],sentence:'轻而清的东西，缓缓上升，变成了天；重而浊的东西，慢慢下降，变成了地。',analysis:'对偶句式工整优美；"轻清→天，重浊→地"对应清晰。'},
+  {grade:'三年级',source:'《孔子拜师》',words:['远近闻名','风餐露宿','日夜兼程','毫无保留'],sentence:'孔子年轻的时候，就已经是远近闻名的老师了。他总觉得自己的知识还不够渊博。',analysis:'"远近闻名"与"还不够"形成对比，展现谦逊品格。'},
+  {grade:'四年级',source:'《长城》',words:['蜿蜒盘旋','气魄雄伟','崇山峻岭','智慧'],sentence:'这样气魄雄伟的工程，在世界历史上是一个伟大的奇迹。',analysis:'"气魄雄伟""伟大奇迹"用词庄重；感叹句表达强烈的民族自豪感。'},
+  {grade:'四年级',source:'《搭石》',words:['协调有序','清波漾漾','人影绰绰','理所当然'],sentence:'前面的抬起脚来，后面的紧跟上去，嗒嗒的声音，像轻快的音乐。',analysis:'拟声词"嗒嗒"增强画面感；"像轻快的音乐"把劳动变成了美的享受。'},
+  {grade:'五年级',source:'《狼牙山五壮士》',words:['斩钉截铁','热血沸腾','壮烈豪迈','坚强不屈'],sentence:'战士们也昂首挺胸，相继从悬崖往下跳。',analysis:'"昂首挺胸"写出英雄气概；"斩钉截铁""坚强不屈"塑造壮士群像。'},
+  {grade:'五年级',source:'《"精彩极了"和"糟糕透了"》',words:['鼓励','警告','平衡','前进'],sentence:'我从心底里知道，"精彩极了"也好，"糟糕透了"也好，这两个极端的断言有一个共同的出发点——那就是爱。',analysis:'破折号引出"爱"这个关键词；两种评价的辩证统一揭示教育真谛。'},
+  {grade:'六年级',source:'《桃花心木》',words:['优雅自在','勃勃生机','独立自主','养分'],sentence:'不只是树，人也是一样，在不确定中生活的人，能比较经得起生活的考验，会锻炼出一颗独立自主的心。',analysis:'由树及人，借物喻理；"不确定"一词含义丰富，引人深思。'},
+  {grade:'六年级',source:'《真理诞生于一百个问号之后》',words:['司空见惯','追根求源','无独有偶','见微知著'],sentence:'最后把"？"拉直变成"！"，找到了真理。',analysis:'标点符号的比喻极其巧妙；"？→！"形象概括科学发现的过程。'},
+  {grade:'一年级',source:'《雨点儿》',words:['数不清','云彩','飘落','地方'],sentence:'数不清的雨点儿，从云彩里飘落下来。',analysis:'"数不清"写出雨点之多；"飘落"一词轻柔优美。'},
+  {grade:'二年级',source:'《泉水》',words:['火红','明亮','静静','尽情'],sentence:'丁冬，丁冬，欢快的泉水弹着琴跑下山去。',analysis:'拟声词"丁冬"+"弹着琴"拟人，使泉水充满灵性。'},
+  {grade:'二年级',source:'《日月潭》',words:['群山环绕','名胜古迹','隐隐约约','风光秀丽'],sentence:'日月潭很深，湖水碧绿。湖中央有个美丽的小岛，叫光华岛。',analysis:'简洁的语言勾勒出日月潭的轮廓；"碧绿"一词点出湖水之美。'},
+  {grade:'三年级',source:'《一幅名扬中外的画》',words:['热闹','来来往往','形态各异','清清楚楚'],sentence:'画上的街市可热闹了。街上有挂着各种招牌的店铺、作坊、酒楼、茶馆……',analysis:'列举法让读者仿佛置身画中；省略号暗示内容之丰富。'},
+  {grade:'三年级',source:'《狮子和鹿》',words:['欣赏','抱怨','逼近','叹气'],sentence:'两只美丽的角差点儿送了我的命，可四条难看的腿却让我狮口逃生！',analysis:'"美丽"与"难看"、"送命"与"逃生"双重对比，寓意深刻。'},
+  {grade:'四年级',source:'《万年牢》',words:['走街串巷','受益','认真','实在'],sentence:'父亲教导我做万年牢，就是要做个可靠的人，实实在在的人。',analysis:'"万年牢"一语双关：既是糖葫芦的品质，也是做人的准则。'},
+  {grade:'四年级',source:'《黄河是怎样变化的》',words:['摇篮','忧患','不断','繁衍'],sentence:'人们都说，黄河是中华民族的摇篮。',analysis:'"摇篮"一词将黄河比作孕育中华民族的母亲，比喻贴切而深情。'},
+  {grade:'五年级',source:'《杨氏之子》',words:['聪惠','设果','应声','甚'],sentence:'儿应声答曰："未闻孔雀是夫子家禽。"',analysis:'"应声"写出反应之快；巧妙利用对方的逻辑反驳，展现机智。'},
+  {grade:'五年级',source:'《晏子使楚》',words:['敝国','安居乐业','得意扬扬','面不改色'],sentence:'楚王只好陪着笑。',analysis:'"只好"一词写出楚王的无奈；一个词便体现晏子的外交智慧。'},
+  {grade:'六年级',source:'《一夜的工作》',words:['审阅','思索','简朴','劳苦'],sentence:'他一句一句地审阅，看完一句就用笔在那一句后面画上一个小圆圈。',analysis:'"一句一句""画上小圆圈"细节描写写出总理工作的认真细致。'},
+  {grade:'六年级',source:'《中华少年》',words:['巍峨','峻拔','璀璨','翱翔'],sentence:'从巍峨峻拔的高原走来，我是冰山上的一朵雪莲；从碧波环抱的宝岛走来，我是海风中的一只乳燕。',analysis:'排比+比喻展现祖国壮美河山；每句以地名开头、以比喻结尾，对仗工整。'},
+  {grade:'六年级',source:'《彩色的翅膀》',words:['安居乐业','碧空如洗','波涛起伏','水落石出'],sentence:'我忽然发现窗玻璃上停着一只蝴蝶，正对着朝阳，扇动着它那对彩色的翅膀。',analysis:'结尾的蝴蝶意象含蓄点题；"彩色的翅膀"象征战士的美好心愿。'},
 ];
 
 
@@ -535,20 +778,16 @@ function renderContent(){
 }
 
 
-// ============ 好词好句渲染 ============
+// ============ 好词好句渲染（每日轮换）============
 function renderGoodWords(d){
-  var currentLevel=d.ch_words_level||0;
-  if(currentLevel>=GOOD_WORDS.length)currentLevel=0;
-  var g=GOOD_WORDS[currentLevel];
-  var key='gword_'+currentLevel;
+  var dayIdx=dayIndex(GOOD_WORDS.length);
+  var g=GOOD_WORDS[dayIdx];
+  var key='gword_'+dayIdx;
   var done=d[key];
   var h='';
+  var now=new Date();
   h+='<div class="card" style="text-align:center;padding:18px 14px">';
-  h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
-  h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(\'ch_words_level\',-1,'+GOOD_WORDS.length+')">⬅ 上一篇</button>';
-  h+='<div style="background:linear-gradient(135deg,#FFB6C1,#FF85A2);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">🌸 第'+(currentLevel+1)+'篇</div>';
-  h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(\'ch_words_level\',1,'+GOOD_WORDS.length+')">下一篇 ➡</button>';
-  h+='</div>';
+  h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日推荐</div>';
   // 年级+来源
   h+='<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px">';
   h+='<span style="background:var(--pink-light);color:var(--pink-dark);padding:3px 12px;border-radius:10px;font-size:12px;font-weight:700">'+g.grade+'</span>';
@@ -574,7 +813,7 @@ function renderGoodWords(d){
   h+='</div>';
   // 打卡
   h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-gword="'+currentLevel+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已积累':'📝 积累好词好句')+'</button>';
-  h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+GOOD_WORDS.length+'篇 · 每天积累1篇</div>';
+  h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+GOOD_WORDS.length+'篇 · 每日自动轮换</div>';
   h+='</div>';
   return h;
 }
@@ -592,26 +831,22 @@ function renderChinese(){
   }else if(currentSub==='goodwords'){
     h+=renderGoodWords(d);
   }else if(currentSub==='poem'){
-    // 闯关模式：每天一关，显示当前关
-    var currentLevel=d.ch_poem_level||0;
-    if(currentLevel>=POEMS.length)currentLevel=0;
-    var p=POEMS[currentLevel];
-    var key='poem_'+currentLevel;
+    // 每日推荐模式
+    var dayIdx=dayIndex(POEMS.length);
+    var p=POEMS[dayIdx];
+    var key='poem_'+dayIdx;
     var done=d[key];
+    var now=new Date();
     h+='<div class="card" style="text-align:center;padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;ch_poem_level&apos;,-1,&apos;+POEMS.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;ch_poem_level&apos;,1,&apos;+POEMS.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日古诗</div>';
     h+='<div style="font-size:26px;font-weight:800;color:var(--pink);margin-bottom:4px;font-family:STKaiti,KaiTi,serif">'+p.title+'</div>';
     h+='<div style="font-size:15px;color:var(--gray-500);margin-bottom:20px">'+p.author+'</div>';
     h+='<div style="font-size:22px;line-height:2.2;color:#333;font-family:STKaiti,KaiTi,serif;margin-bottom:20px">'+p.content.replace(/\n/g,'<br>')+'</div>';
     h+='<div style="background:var(--pink-light);border-radius:14px;padding:14px;margin-bottom:16px">';
     h+='<div style="font-size:13px;color:var(--gray-600);line-height:1.8">📝 诗意：<br>明亮的月光照在床前，白白的就像地上结了霜。抬起头看天上的明月，低下头想起远方的家。</div>';
     h+='</div>';
-    h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-poem="'+currentLevel+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已背会':'📖 我会背了！')+'</button>';
-    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+POEMS.length+'关 · 每天过1关</div>';
+    h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-poem="'+dayIdx+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已背会':'📖 我会背了！')+'</button>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+POEMS.length+'首 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='read'){
     h+='<div class="card"><div class="card-title">📖 课外阅读 1小时</div>';
@@ -621,7 +856,7 @@ function renderChinese(){
   }else if(currentSub==='express'){
     h+='<div class="card"><div class="card-title">💡 理解表达力训练（每日轮换）</div>';
     h+='<p style="font-size:14px;color:var(--gray-500);margin-bottom:8px">每天一道不同的题型，坚持训练让理解表达能力越来越棒！</p>';
-    var dayIdx=new Date().getDate()%EXPRESS.length;
+    var dayIdx=dayIndex(EXPRESS.length);
     var e=EXPRESS[dayIdx];
     var key='express_'+dayIdx;
     var done=d[key];
@@ -636,94 +871,74 @@ function renderMath(){
   var d=loadTask();
   var h='';
   if(currentSub==='map'){
-    // 思维导图闯关
-    var currentLevel=d.math_map_level||0;
-    if(currentLevel>=MINDMAP.length)currentLevel=0;
-    var n=MINDMAP[currentLevel];
+    // 思维导图每日推荐
+    var dayIdx=dayIndex(MINDMAP.length);
+    var n=MINDMAP[dayIdx];
     var diffStars='';
     for(var j=0;j<n.diff;j++)diffStars+='★';
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_map_level&apos;,-1,&apos;+MINDMAP.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_map_level&apos;,1,&apos;+MINDMAP.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日导图</div>';
     h+='<div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:8px">'+n.name+'</div>';
     h+='<div style="font-size:16px;color:var(--gray-600);margin-bottom:10px">难度：<span style="color:var(--orange)">'+diffStars+'</span></div>';
     if(n.relation)h+='<div style="font-size:14px;color:var(--gray-500);background:var(--blue-light);padding:10px;border-radius:10px;margin-bottom:16px">→ '+n.relation+'</div>';
     h+='<p style="font-size:15px;color:var(--gray-600);line-height:2">💡 学习建议：<br>• 先理解这个知识点的含义<br>• 看课本例题<br>• 做3道练习题巩固</p>';
-    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+MINDMAP.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+MINDMAP.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='concept'){
-    // 概念速查闯关
-    var currentLevel=d.math_concept_level||0;
-    if(currentLevel>=CONCEPTS.length)currentLevel=0;
-    var c=CONCEPTS[currentLevel];
+    // 概念速查每日推荐
+    var dayIdx=dayIndex(CONCEPTS.length);
+    var c=CONCEPTS[dayIdx];
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_concept_level&apos;,-1,&apos;+CONCEPTS.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_concept_level&apos;,1,&apos;+CONCEPTS.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日概念</div>';
     h+='<div style="font-size:14px;color:var(--gray-500);margin-bottom:8px">'+c.cat+'</div>';
     h+='<div style="font-size:24px;font-weight:800;color:var(--blue);margin-bottom:12px">'+c.name+'</div>';
     h+='<div style="background:var(--blue-light);border-radius:14px;padding:16px;margin-bottom:16px">';
     h+='<div style="font-size:18px;font-weight:700;color:var(--blue-dark);margin-bottom:8px">'+c.formula+'</div>';
     h+='<div style="font-size:16px;color:#555;line-height:1.8">'+c.explain+'</div>';
     h+='</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500)">共'+CONCEPTS.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+CONCEPTS.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='quiz'){
-    // 练习题闯关
-    var currentLevel=d.math_quiz_level||0;
+    // 练习题每日推荐
     var allQuiz=QUIZ_BASIC.concat(QUIZ_IMPROVE).concat(QUIZ_CHALLENGE);
-    if(currentLevel>=allQuiz.length)currentLevel=0;
-    var q=allQuiz[currentLevel];
-    var levelName=currentLevel<QUIZ_BASIC.length?'基础':currentLevel<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'提高':'挑战';
-    var levelColor=currentLevel<QUIZ_BASIC.length?'var(--green)':currentLevel<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'var(--orange)':'var(--purple)';
+    var dayIdx=dayIndex(allQuiz.length);
+    var q=allQuiz[dayIdx];
+    var levelName=dayIdx<QUIZ_BASIC.length?'基础':dayIdx<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'提高':'挑战';
+    var levelColor=dayIdx<QUIZ_BASIC.length?'var(--green)':dayIdx<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'var(--orange)':'var(--purple)';
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_quiz_level&apos;,-1,&apos;+allQuiz.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_quiz_level&apos;,1,&apos;+allQuiz.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日练习</div>';
     h+='<span style="display:inline-block;padding:4px 14px;border-radius:12px;font-size:12px;font-weight:700;color:#fff;background:'+levelColor+'">'+levelName+'题</span>';
     h+='<div style="font-size:20px;font-weight:700;margin:16px 0;line-height:1.6">'+q.q+'</div>';
     h+='<div class="quiz-options">';
     q.options.forEach(function(opt,j){
-      h+='<div class="quiz-option" data-quiz="all_'+currentLevel+'" data-opt="'+j+'" style="font-size:16px;padding:12px">'+opt+'</div>';
+      h+='<div class="quiz-option" data-quiz="all_'+dayIdx+'" data-opt="'+j+'" style="font-size:16px;padding:12px">'+opt+'</div>';
     });
     h+='</div>';
-    h+='<div class="quiz-explain" id="explain_all_'+currentLevel+'" style="font-size:14px;padding:12px">💡 '+q.explain+'</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+allQuiz.length+'关 · 每天过1关</div>';
+    h+='<div class="quiz-explain" id="explain_all_'+dayIdx+'" style="font-size:14px;padding:12px">💡 '+q.explain+'</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+allQuiz.length+'题 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='life'){
-    // 生活化解读闯关
-    var currentLevel=d.math_life_level||0;
-    if(currentLevel>=LIFE_MATH.length)currentLevel=0;
-    var l=LIFE_MATH[currentLevel];
+    // 生活化解读每日推荐
+    var dayIdx=dayIndex(LIFE_MATH.length);
+    var l=LIFE_MATH[dayIdx];
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_life_level&apos;,-1,&apos;+LIFE_MATH.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_life_level&apos;,1,&apos;+LIFE_MATH.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日生活数学</div>';
     h+='<div style="font-size:20px;font-weight:800;color:var(--blue);margin-bottom:12px">'+l.concept+'</div>';
     h+='<div style="font-size:18px;color:#444;line-height:2;margin-bottom:16px;background:var(--blue-light);padding:16px;border-radius:14px">'+l.life+'</div>';
     h+='<div style="font-size:16px;color:var(--orange);padding:12px;background:var(--orange-light);border-radius:12px">💡 '+l.q+'</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+LIFE_MATH.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+LIFE_MATH.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='pit'){
-    // 易错点闯关
-    var currentLevel=d.math_pit_level||0;
-    if(currentLevel>=PITFALLS.length)currentLevel=0;
-    var p=PITFALLS[currentLevel];
+    // 易错点每日推荐
+    var dayIdx=dayIndex(PITFALLS.length);
+    var p=PITFALLS[dayIdx];
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_pit_level&apos;,-1,&apos;+PITFALLS.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_pit_level&apos;,1,&apos;+PITFALLS.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日避坑</div>';
     h+='<div style="font-size:20px;font-weight:700;color:#FF6B6B;margin-bottom:16px">⚠️ '+p.pit+'</div>';
     h+='<div style="background:#FFE5E5;border-radius:14px;padding:14px;margin-bottom:12px">';
     h+='<div style="font-size:16px;color:#FF6B6B;margin-bottom:8px">❌ 错误做法</div>';
@@ -737,7 +952,7 @@ function renderMath(){
     h+='<div style="font-size:16px;color:#8B6914">🔑 记忆口诀</div>';
     h+='<div style="font-size:18px;color:#8B6914;line-height:1.8;margin-top:6px">'+p.tip+'</div>';
     h+='</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+PITFALLS.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+PITFALLS.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }
   return h;
@@ -765,16 +980,12 @@ function renderEnglish(){
   var d=loadTask();
   var h='';
   if(currentSub==='listen'){
-    // 听力闯关
-    var currentLevel=d.eng_listen_level||0;
-    if(currentLevel>=LISTENINGS.length)currentLevel=0;
-    var L=LISTENINGS[currentLevel];
+    // 听力每日推荐
+    var dayIdx=dayIndex(LISTENINGS.length);
+    var L=LISTENINGS[dayIdx];
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_listen_level&apos;,-1,&apos;+LISTENINGS.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_listen_level&apos;,1,&apos;+LISTENINGS.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日听力</div>';
     h+='<div style="font-size:20px;font-weight:800;color:var(--orange);margin-bottom:12px">'+L.title+'</div>';
     h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><button class="listen-play" id="listenPlayBtn" style="width:50px;height:50px;font-size:20px">▶️</button><div style="font-size:14px;color:var(--gray-500)">点击播放听力</div></div>';
     h+='<div class="listen-text" id="listenText" style="display:none;font-size:16px;line-height:2">'+L.text+'</div>';
@@ -787,7 +998,7 @@ function renderEnglish(){
       });
       h+='</div><div class="quiz-explain" id="lexplain_'+i+'" style="font-size:14px;padding:10px">正确答案：'+qi.options[qi.answer]+'</div></div>';
     });
-    h+='<div style="font-size:11px;color:var(--gray-500)">共'+LISTENINGS.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+LISTENINGS.length+'篇 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='xueersi'){
     h+='<div class="card"><div class="card-title">📝 学而思练习册</div>';
@@ -795,45 +1006,37 @@ function renderEnglish(){
     h+='<p style="font-size:14px;color:var(--gray-600);margin-top:10px;line-height:1.8;background:var(--orange-light);padding:12px;border-radius:10px">💡 做题小贴士：<br>• 不认识的单词先做标记<br>• 做完一题检查一题<br>• 错题要看解析并整理笔记</p>';
     h+='</div>';
   }else if(currentSub==='words'){
-    // 单词闯关
+    // 单词每日推荐
     var allWords=[];
     WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
-    var currentLevel=d.eng_word_level||0;
-    if(currentLevel>=allWords.length)currentLevel=0;
-    var w=allWords[currentLevel];
+    var dayIdx=dayIndex(allWords.length);
+    var w=allWords[dayIdx];
     var key='word_'+w.unit+'_'+w.idx;
     var starred=d[key];
+    var now=new Date();
     h+='<div class="card" style="text-align:center;padding:30px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_word_level&apos;,-1,&apos;+allWords.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_word_level&apos;,1,&apos;+allWords.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日单词</div>';
     h+='<div style="font-size:42px;font-weight:800;color:var(--orange);margin-bottom:8px">'+w.en+'</div>';
     h+='<div style="font-size:24px;color:var(--gray-600);margin-bottom:20px">'+w.cn+'</div>';
     h+='<div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px">';
     h+='<button class="word-speak" data-en="'+w.en+'" style="width:50px;height:50px;font-size:20px;border-radius:50%">🔊</button>';
     h+='<span class="word-star'+(starred?' on':'')+'" data-wkey="'+key+'" style="font-size:36px;cursor:pointer">⭐</span>';
     h+='</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500)">共'+allWords.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+allWords.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='grammar'){
-    // 语法闯关
-    var currentLevel=d.eng_grammar_level||0;
-    if(currentLevel>=GRAMMARS.length)currentLevel=0;
-    var g=GRAMMARS[currentLevel];
+    // 语法每日推荐
+    var dayIdx=dayIndex(GRAMMARS.length);
+    var g=GRAMMARS[dayIdx];
+    var now=new Date();
     h+='<div class="card" style="padding:20px 14px">';
-    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_grammar_level&apos;,-1,&apos;+GRAMMARS.length+&apos;)">⬅ 上一关</button>';
-    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
-    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_grammar_level&apos;,1,&apos;+GRAMMARS.length+&apos;)">下一关 ➡</button>';
-    h+='</div>';
+    h+='<div class="daily-date-bar">📅 '+now.getFullYear()+'年'+(now.getMonth()+1)+'月'+now.getDate()+'日 · 今日语法</div>';
     h+='<div style="font-size:22px;font-weight:800;color:var(--orange);margin-bottom:16px">'+g.title+'</div>';
     h+='<div style="background:var(--orange-light);border-radius:14px;padding:16px;margin-bottom:16px">';
     h+='<div style="font-size:18px;color:#555;line-height:1.8;margin-bottom:10px">'+g.rule+'</div>';
     h+='<div style="font-size:16px;color:#8B5A1B;background:#fff;padding:10px;border-radius:10px">例：'+g.example+'</div>';
     h+='</div>';
-    h+='<div style="font-size:11px;color:var(--gray-500)">共'+GRAMMARS.length+'关 · 每天过1关</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+GRAMMARS.length+'条 · 每日自动轮换</div>';
     h+='</div>';
   }
   return h;
@@ -1258,21 +1461,30 @@ function bindAllEvents(){
       updateProgress();updateMelody();
     });
   });
-  // 古诗
+  // 古诗 & 好词好句 打卡
   $$('.poem-recite-btn').forEach(function(b){
     if(b.dataset.bound)return;b.dataset.bound='1';
     b.addEventListener('click',function(){
       var i=parseInt(b.dataset.poem);
-      var d=loadTask();d['poem_'+i]=!d['poem_'+i];saveTask(d);
-      if(d['poem_'+i]){b.textContent='已背✓';b.classList.add('done');b.parentElement.querySelector('.poem-title').innerHTML=POEMS[i].title+' ✅';}
-      else{b.textContent='背诵打卡';b.classList.remove('done');b.parentElement.querySelector('.poem-title').innerHTML=POEMS[i].title;}
+      if(!isNaN(i)){
+        var d=loadTask();d['poem_'+i]=!d['poem_'+i];saveTask(d);
+        if(d['poem_'+i]){b.textContent='已背✓';b.classList.add('done');}
+        else{b.textContent='📖 我会背了！';b.classList.remove('done');}
+      }
+      // 好词好句打卡
+      var gw=parseInt(b.dataset.gword);
+      if(!isNaN(gw)){
+        var d=loadTask();d['gword_'+gw]=!d['gword_'+gw];saveTask(d);
+        if(d['gword_'+gw]){b.textContent='✅ 已积累';b.classList.add('done');}
+        else{b.textContent='📝 积累好词好句';b.classList.remove('done');}
+      }
       updateProgress();updateMelody();
     });
   });
   // 表达
   var eb=$('#expressBtn');
   if(eb&&!eb.dataset.bound){eb.dataset.bound='1';eb.addEventListener('click',function(){
-    var dayIdx=new Date().getDate()%EXPRESS.length;
+    var dayIdx=dayIndex(EXPRESS.length);
     var dt=loadTask();dt['express_text_'+dayIdx]=$('#expressInput').value;dt['express_'+dayIdx]=true;saveTask(dt);
     eb.textContent='已完成✅';eb.style.background='var(--green)';
     updateProgress();updateMelody();
@@ -1290,7 +1502,7 @@ function bindAllEvents(){
     if(o.dataset.bound)return;o.dataset.bound='1';
     o.addEventListener('click',function(){
       var i=parseInt(o.dataset.lq),j=parseInt(o.dataset.lopt);
-      var dayIdx=new Date().getDate()%LISTENINGS.length;
+      var dayIdx=dayIndex(LISTENINGS.length);
       var L=LISTENINGS[dayIdx];
       var all=$$('.quiz-option[data-lq="'+i+'"]');
       all.forEach(function(x){x.classList.remove('selected','correct','wrong')});
@@ -1404,11 +1616,15 @@ function speakEn(text){
 
 // ============ 进度 + 美乐蒂 ============
 function getStudyTasks(){
-  var tasks=['ch_hw','ch_review','ch_words','ch_read'];
-  POEMS.forEach(function(p,i){tasks.push('poem_'+i)});
-  tasks.push('express_'+(new Date().getDate()%EXPRESS.length));
+  var tasks=['ch_hw','ch_review','ch_read'];
+  // 每日轮换内容：当天只有1个
+  tasks.push('gword_'+dayIndex(GOOD_WORDS.length));
+  tasks.push('poem_'+dayIndex(POEMS.length));
+  tasks.push('express_'+dayIndex(EXPRESS.length));
   tasks.push('eng_xueersi');
-  WORDS.forEach(function(u){u.list.forEach(function(w,i){tasks.push('word_'+u.unit+'_'+i)})});
+  var allWords=[];
+  WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
+  tasks.push('word_'+allWords[dayIndex(allWords.length)].unit+'_'+allWords[dayIndex(allWords.length)].idx);
   return tasks;
 }
 
@@ -1422,18 +1638,22 @@ function updateProgress(){
 
 function updateSidebarCounts(){
   var d=loadTask();
-  // 语文
-  var chTotal=2+POEMS.length+1+1+1;//hw+review+poems+goodwords+read+express
-  var chDone=(d.ch_hw?1:0)+(d.ch_review?1:0)+(d.ch_words?1:0)+(d.ch_read?1:0);
-  POEMS.forEach(function(p,i){if(d['poem_'+i])chDone++;});
-  if(d['express_'+(new Date().getDate()%EXPRESS.length)])chDone++;
+  // 语文：作业2 + 阅读1 + 每日好词好句1 + 每日古诗1 + 每日表达1
+  var chTotal=2+1+1+1+1;
+  var chDone=(d.ch_hw?1:0)+(d.ch_review?1:0)+(d.ch_read?1:0);
+  if(d['gword_'+dayIndex(GOOD_WORDS.length)])chDone++;
+  if(d['poem_'+dayIndex(POEMS.length)])chDone++;
+  if(d['express_'+dayIndex(EXPRESS.length)])chDone++;
   $('#cntChinese').textContent=chDone+'/'+chTotal;
   // 数学：思维导图是知识点不是任务，分层练习是任务
   $('#cntMath').textContent='5模块';
-  // 英语
-  var engTotal=1+WORDS.reduce(function(s,u){return s+u.list.length;},0);
+  // 英语：学而思1 + 每日单词1
+  var engTotal=1+1;
   var engDone=(d.eng_xueersi?1:0);
-  WORDS.forEach(function(u){u.list.forEach(function(w,i){if(d['word_'+u.unit+'_'+i])engDone++;});});
+  var allWords=[];
+  WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
+  var wordKey='word_'+allWords[dayIndex(allWords.length)].unit+'_'+allWords[dayIndex(allWords.length)].idx;
+  if(d[wordKey])engDone++;
   $('#cntEnglish').textContent=engDone+'/'+engTotal;
   // 生活
   var lfTotal=4,lvDone=(d.brush_morning?1:0)+(d.brush_evening?1:0)+(d.meal_speed?1:0)+(d.sleep_early?1:0);
@@ -1523,17 +1743,6 @@ function closeModal(id){$('#'+id).classList.remove('show');}
 function closeAllModals(){$$('.modal').forEach(function(m){m.classList.remove('show')});}
 
 // ============ 关卡切换 ============
-function changeLevel(key,delta,max){
-  var d=loadTask();
-  var current=d[key]||0;
-  current+=delta;
-  if(current<0)current=0;
-  if(current>=max)current=max-1;
-  d[key]=current;
-  saveTask(d);
-  renderContent();
-}
-
 // ============ 初始化 ============
 function init(){
   setupSidebar();
