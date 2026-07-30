@@ -278,3 +278,20 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft 
 
 /* 每日日期条 */
 .daily-date-bar{text-align:center;font-size:12px;font-weight:600;color:var(--gray-500);margin-bottom:14px;padding:6px 0;border-bottom:1px dashed var(--gray-100);letter-spacing:0.5px}
+
+/* 数学每日打卡按钮 */
+.daily-check-btn{display:block;margin:0 auto;background:var(--blue-light);color:var(--blue-dark);border:none;cursor:pointer;font-weight:700;transition:all .3s}
+.daily-check-btn.done{background:var(--green-light);color:var(--green)}
+.daily-check-btn:active{transform:scale(.95)}
+
+/* 进度条100%金色 */
+.progress-fill.complete{background:linear-gradient(90deg,#FFD700,#FFA500)!important;box-shadow:0 0 12px rgba(255,215,0,.5)}
+.progress-bar.bar-complete{border-color:#FFD700;box-shadow:0 0 8px rgba(255,215,0,.3)}
+
+/* 美乐蒂超级开心 */
+.mascot.super .mascot-svg{animation:bounce .5s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+
+/* 美乐蒂开心 */
+.mascot.happy .mascot-svg{animation:wiggle 2s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}

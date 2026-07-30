@@ -883,6 +883,7 @@ function renderMath(){
     h+='<div style="font-size:16px;color:var(--gray-600);margin-bottom:10px">难度：<span style="color:var(--orange)">'+diffStars+'</span></div>';
     if(n.relation)h+='<div style="font-size:14px;color:var(--gray-500);background:var(--blue-light);padding:10px;border-radius:10px;margin-bottom:16px">→ '+n.relation+'</div>';
     h+='<p style="font-size:15px;color:var(--gray-600);line-height:2">💡 学习建议：<br>• 先理解这个知识点的含义<br>• 看课本例题<br>• 做3道练习题巩固</p>';
+    h+='<button class="daily-check-btn'+(d.math_map?' done':'')+'" data-daily="math_map" style="margin-top:10px;font-size:15px;padding:8px 24px;border-radius:18px">'+(d.math_map?'✅ 今日已学':'📝 今日已学，打卡')+'</button>';
     h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+MINDMAP.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='concept'){
@@ -898,6 +899,7 @@ function renderMath(){
     h+='<div style="font-size:18px;font-weight:700;color:var(--blue-dark);margin-bottom:8px">'+c.formula+'</div>';
     h+='<div style="font-size:16px;color:#555;line-height:1.8">'+c.explain+'</div>';
     h+='</div>';
+    h+='<button class="daily-check-btn'+(d.math_concept?' done':'')+'" data-daily="math_concept" style="margin-top:10px;font-size:15px;padding:8px 24px;border-radius:18px">'+(d.math_concept?'✅ 今日已学':'📝 今日已学，打卡')+'</button>';
     h+='<div style="font-size:11px;color:var(--gray-500)">共'+CONCEPTS.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='quiz'){
@@ -918,6 +920,7 @@ function renderMath(){
     });
     h+='</div>';
     h+='<div class="quiz-explain" id="explain_all_'+dayIdx+'" style="font-size:14px;padding:12px">💡 '+q.explain+'</div>';
+    h+='<button class="daily-check-btn'+(d.math_quiz?' done':'')+'" data-daily="math_quiz" style="margin-top:10px;font-size:15px;padding:8px 24px;border-radius:18px">'+(d.math_quiz?'✅ 今日已练':'📝 今日已练，打卡')+'</button>';
     h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+allQuiz.length+'题 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='life'){
@@ -930,6 +933,7 @@ function renderMath(){
     h+='<div style="font-size:20px;font-weight:800;color:var(--blue);margin-bottom:12px">'+l.concept+'</div>';
     h+='<div style="font-size:18px;color:#444;line-height:2;margin-bottom:16px;background:var(--blue-light);padding:16px;border-radius:14px">'+l.life+'</div>';
     h+='<div style="font-size:16px;color:var(--orange);padding:12px;background:var(--orange-light);border-radius:12px">💡 '+l.q+'</div>';
+    h+='<button class="daily-check-btn'+(d.math_life?' done':'')+'" data-daily="math_life" style="margin-top:10px;font-size:15px;padding:8px 24px;border-radius:18px">'+(d.math_life?'✅ 今日已学':'📝 今日已学，打卡')+'</button>';
     h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+LIFE_MATH.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }else if(currentSub==='pit'){
@@ -952,6 +956,7 @@ function renderMath(){
     h+='<div style="font-size:16px;color:#8B6914">🔑 记忆口诀</div>';
     h+='<div style="font-size:18px;color:#8B6914;line-height:1.8;margin-top:6px">'+p.tip+'</div>';
     h+='</div>';
+    h+='<button class="daily-check-btn'+(d.math_pit?' done':'')+'" data-daily="math_pit" style="margin-top:10px;font-size:15px;padding:8px 24px;border-radius:18px">'+(d.math_pit?'✅ 今日已学':'📝 今日已学，打卡')+'</button>';
     h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+PITFALLS.length+'个 · 每日自动轮换</div>';
     h+='</div>';
   }
@@ -1478,7 +1483,18 @@ function bindAllEvents(){
         if(d['gword_'+gw]){b.textContent='✅ 已积累';b.classList.add('done');}
         else{b.textContent='📝 积累好词好句';b.classList.remove('done');}
       }
-      updateProgress();updateMelody();
+      updateProgress();updateMelody();updateSidebarCounts();
+    });
+  });
+  // 数学每日打卡按钮
+  $$('.daily-check-btn').forEach(function(b){
+    if(b.dataset.bound)return;b.dataset.bound='1';
+    b.addEventListener('click',function(){
+      var id=b.dataset.daily;if(!id)return;
+      var d=loadTask();d[id]=!d[id];saveTask(d);
+      if(d[id]){b.textContent='✅ 今日已学';b.classList.add('done');}
+      else{b.textContent='📝 今日已学，打卡';b.classList.remove('done');}
+      updateProgress();updateMelody();updateSidebarCounts();
     });
   });
   // 表达
@@ -1563,7 +1579,9 @@ function bindAllEvents(){
           b.textContent='▶';b.classList.remove('stop');b.classList.add('start');
         }else{
           sportTimers[sid]=setInterval(function(){
-            var dt=loadTask();dt['sport_'+sid]=(dt['sport_'+sid]||0)+1;saveTask(dt);
+            var dt=loadTask();dt['sport_'+sid]=(dt['sport_'+sid]||0)+1;
+            if((dt['sport_'+sid]||0)>=60)dt['sport_done']=true;
+            saveTask(dt);
             var s=dt['sport_'+sid],m=Math.floor(s/60),ss=s%60;
             $('#stime_'+sid).textContent=m+':'+String(ss).padStart(2,'0');
             updateSportTotal();
@@ -1616,15 +1634,25 @@ function speakEn(text){
 
 // ============ 进度 + 美乐蒂 ============
 function getStudyTasks(){
-  var tasks=['ch_hw','ch_review','ch_read'];
-  // 每日轮换内容：当天只有1个
+  var tasks=[];
+  // 语文：作业2 + 阅读1 + 好词好句1 + 古诗1 + 表达1
+  tasks.push('ch_hw'); tasks.push('ch_review'); tasks.push('ch_read');
   tasks.push('gword_'+dayIndex(GOOD_WORDS.length));
   tasks.push('poem_'+dayIndex(POEMS.length));
   tasks.push('express_'+dayIndex(EXPRESS.length));
+  // 数学：5个模块打卡
+  tasks.push('math_map'); tasks.push('math_concept');
+  tasks.push('math_quiz'); tasks.push('math_life'); tasks.push('math_pit');
+  // 英语：学而思1 + 单词1
   tasks.push('eng_xueersi');
   var allWords=[];
   WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
   tasks.push('word_'+allWords[dayIndex(allWords.length)].unit+'_'+allWords[dayIndex(allWords.length)].idx);
+  // 生活：4个习惯
+  tasks.push('brush_morning'); tasks.push('brush_evening');
+  tasks.push('meal_speed'); tasks.push('sleep_early');
+  // 运动：今日运动（任意运动>0即算完成）
+  tasks.push('sport_done');
   return tasks;
 }
 
@@ -1634,33 +1662,43 @@ function updateProgress(){
   var fill=$('#progressFill');
   fill.style.width=pct+'%';
   fill.classList.toggle('qualified',pct>=70);
+  fill.classList.toggle('complete',pct>=100);
+  // 100%完成时进度条金色
+  var bar=fill.parentElement;
+  if(bar){
+    bar.classList.toggle('bar-complete',pct>=100);
+  }
 }
 
 function updateSidebarCounts(){
   var d=loadTask();
-  // 语文：作业2 + 阅读1 + 每日好词好句1 + 每日古诗1 + 每日表达1
-  var chTotal=2+1+1+1+1;
+  // 语文：作业2 + 阅读1 + 好词好句1 + 古诗1 + 表达1 = 6
+  var chTotal=6;
   var chDone=(d.ch_hw?1:0)+(d.ch_review?1:0)+(d.ch_read?1:0);
   if(d['gword_'+dayIndex(GOOD_WORDS.length)])chDone++;
   if(d['poem_'+dayIndex(POEMS.length)])chDone++;
   if(d['express_'+dayIndex(EXPRESS.length)])chDone++;
   $('#cntChinese').textContent=chDone+'/'+chTotal;
-  // 数学：思维导图是知识点不是任务，分层练习是任务
-  $('#cntMath').textContent='5模块';
-  // 英语：学而思1 + 每日单词1
-  var engTotal=1+1;
+  // 数学：5个模块打卡
+  var mathTotal=5;
+  var mathDone=(d.math_map?1:0)+(d.math_concept?1:0)+(d.math_quiz?1:0)+(d.math_life?1:0)+(d.math_pit?1:0);
+  $('#cntMath').textContent=mathDone+'/'+mathTotal;
+  // 英语：学而思1 + 每日单词1 = 2
+  var engTotal=2;
   var engDone=(d.eng_xueersi?1:0);
   var allWords=[];
   WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
   var wordKey='word_'+allWords[dayIndex(allWords.length)].unit+'_'+allWords[dayIndex(allWords.length)].idx;
   if(d[wordKey])engDone++;
   $('#cntEnglish').textContent=engDone+'/'+engTotal;
-  // 生活
+  // 生活：4个习惯
   var lfTotal=4,lvDone=(d.brush_morning?1:0)+(d.brush_evening?1:0)+(d.meal_speed?1:0)+(d.sleep_early?1:0);
   $('#cntLife').textContent=lvDone+'/'+lfTotal;
-  // 运动
-  var spTotal=SPORTS.length,spDone=0;
-  SPORTS.forEach(function(s){if((d['sport_'+s.id]||0)>0)spDone++;});
+  // 运动：任意运动>0即算完成
+  var spTotal=1,spDone=0;
+  var sportTotal=0;
+  SPORTS.forEach(function(s){sportTotal+=d['sport_'+s.id]||0;});
+  if(sportTotal>0)spDone=1;
   $('#cntSport').textContent=spDone+'/'+spTotal;
   // 游戏
   var pg=getGameProgress();var gDone=0;
@@ -1673,22 +1711,54 @@ function updateMelody(){
   var d=loadTask();
   var studyTasks=getStudyTasks();
   var done=0;studyTasks.forEach(function(t){if(d[t])done++;});
-  var pct=done/studyTasks.length*100;
-  var qualified=pct>=70;
+  var pct=Math.round(done/studyTasks.length*100);
+  var total=studyTasks.length;
   var avatar=$('#melodySvg').parentElement;
   var status=$('#mascotStatus');
   var actions=$('#melodyActions');
-  if(qualified){
-    avatar.classList.remove('sad');
-    status.textContent='谢谢珊珊！今天你真棒！💖';
+  var mouth=$('#mouth');
+  var hood=$('#hood');
+  var earL=$('#earL');
+  var earR=$('#earR');
+  var bow=$('#bow');
+  // 多级状态
+  avatar.classList.remove('sad','happy','super');
+  if(pct>=100){
+    // 🌟 全部完成！
+    avatar.classList.add('super');
+    status.textContent='太厉害了！全部完成！美乐蒂超开心！🎉🌟';
     actions.style.display='flex';
-    var mouth=$('#mouth');if(mouth)mouth.setAttribute('d','M42 56 Q50 66 58 56');
+    if(mouth)mouth.setAttribute('d','M42 54 Q50 72 58 54');
+    if(hood)hood.setAttribute('fill','#FFD700');
+    if(earL)earL.setAttribute('fill','#FFD700');
+    if(earR)earR.setAttribute('fill','#FFD700');
+    if(bow)bow.setAttribute('opacity','1');
+    // 今日首次100%弹窗
+    if(!d._celebrated_100){
+      d._celebrated_100=true;saveTask(d);
+      setTimeout(function(){showPraise('🌟','恭喜珊珊！今天所有任务全部完成！\\n美乐蒂开心得发光了✨\\n明天继续加油哦～');},600);
+    }
     updateStreak(true);
+  }else if(pct>=70){
+    avatar.classList.add('happy');
+    status.textContent='谢谢珊珊！今天你真棒！💖 ('+done+'/'+total+')';
+    actions.style.display='flex';
+    if(mouth)mouth.setAttribute('d','M42 56 Q50 66 58 56');
+    if(hood){hood.setAttribute('fill','url(#hoodGrad)');}
+    if(earL)earL.setAttribute('fill','url(#hoodGrad)');
+    if(earR)earR.setAttribute('fill','url(#hoodGrad)');
+    updateStreak(true);
+  }else if(pct>=40){
+    avatar.classList.remove('sad');
+    status.textContent='加油珊珊！快过半啦～💪 ('+done+'/'+total+')';
+    actions.style.display='none';
+    if(mouth)mouth.setAttribute('d','M44 58 Q50 64 56 58');
+    updateStreak(false);
   }else{
     avatar.classList.add('sad');
-    status.textContent='珊珊，明天要加油噢！💪';
+    status.textContent='珊珊，今天还没开始呢，快行动起来吧！🌱 ('+done+'/'+total+')';
     actions.style.display='none';
-    var mouth=$('#mouth');if(mouth)mouth.setAttribute('d','M44 60 Q50 52 56 60');
+    if(mouth)mouth.setAttribute('d','M44 60 Q50 52 56 60');
     updateStreak(false);
   }
 }
