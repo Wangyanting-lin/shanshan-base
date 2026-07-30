@@ -1713,7 +1713,7 @@ function updateMelody(){
   var done=0;studyTasks.forEach(function(t){if(d[t])done++;});
   var pct=Math.round(done/studyTasks.length*100);
   var total=studyTasks.length;
-  var avatar=$('#melodySvg').parentElement;
+  var avatar=$('#mascotSvg').parentElement;
   var status=$('#mascotStatus');
   var actions=$('#melodyActions');
   var mouth=$('#mouth');
