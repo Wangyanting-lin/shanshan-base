@@ -1714,28 +1714,55 @@ function updateMelody(){
     var done=0;studyTasks.forEach(function(t){if(d[t])done++;});
     var pct=Math.round(done/studyTasks.length*100);
     var total=studyTasks.length;
-    var avatar=$('#mascotSvg');
+    var svg=$('#mascotSvg');
+    var mascot=svg?svg.parentElement:null;
     var status=$('#mascotStatus');
     var actions=$('#melodyActions');
-    if(!avatar||!status){console.warn('Melody elements missing');return;}
-    avatar.classList.remove('sad','happy','super');
+    var face=$('#face');
+    var hood=$('#hood');
+    var mouth=$('#mouth');
+    var eyeL=$('#eyeL');
+    var eyeR=$('#eyeR');
+    // 强制放大头像
+    if(mascot){mascot.style.width='80px';mascot.style.height='80px';mascot.style.transition='all .5s';}
+    if(!svg||!status)return;
+    // 重置
+    if(face){face.style.filter='';face.style.opacity='';}
+    if(hood){hood.setAttribute('fill','url(#hoodGrad)');hood.style.filter='';}
+    if(mouth){mouth.setAttribute('d','M42 58 Q50 67 58 58');mouth.style.display='';}
+    if(eyeL)eyeL.style.display='';
+    if(eyeR)eyeR.style.display='';
+    if(svg)svg.style.filter='';
+    if(mascot)mascot.style.animation='';
+    // 按进度改变状态
     if(pct>=100){
-      avatar.classList.add('super');
+      // 金色帽兜 + 开心表情
+      if(hood)hood.setAttribute('fill','#FFD700');
+      if(face)face.style.filter='brightness(1.2)';
+      if(mouth)mouth.setAttribute('d','M42 54 Q50 74 58 54');
+      if(mascot)mascot.style.animation='mascotBounce .3s ease infinite alternate';
       status.textContent='太厉害了！全部完成！美乐蒂超开心！🎉🌟';
       actions.style.display='flex';
       if(!d._celebrated_100){d._celebrated_100=true;saveTask(d);setTimeout(function(){showPraise('🌟','恭喜珊珊！今天所有任务全部完成！\n明天继续加油哦～');},600);}
       updateStreak(true);
     }else if(pct>=70){
-      avatar.classList.add('happy');
+      if(mouth)mouth.setAttribute('d','M42 56 Q50 68 58 56');
+      if(mascot)mascot.style.animation='mascotBounce 1.5s ease-in-out infinite';
       status.textContent='谢谢珊珊！今天你真棒！💖 ('+done+'/'+total+')';
       actions.style.display='flex';
       updateStreak(true);
     }else if(pct>=40){
+      if(mouth)mouth.setAttribute('d','M44 58 Q50 64 56 58');
       status.textContent='加油珊珊！快过半啦～💪 ('+done+'/'+total+')';
       actions.style.display='none';
       updateStreak(false);
     }else{
-      avatar.classList.add('sad');
+      // 灰色滤镜直接加在SVG上
+      if(svg)svg.style.filter='grayscale(1) brightness(.7)';
+      if(mascot)mascot.style.opacity='.5';
+      if(mouth){mouth.setAttribute('d','M44 62 Q50 53 56 62');mouth.style.display='';}
+      if(eyeL)eyeL.style.display='';
+      if(eyeR)eyeR.style.display='';
       status.textContent='珊珊，今天还没开始呢，快行动起来吧！🌱 ('+done+'/'+total+')';
       actions.style.display='none';
       updateStreak(false);
