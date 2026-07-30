@@ -260,7 +260,7 @@ function renderContent(){
   updateSidebarCounts();
 }
 
-// ============ 语文内容 ============
+// ============ 语文内容（闯关模式）============
 function renderChinese(){
   var d=loadTask();
   var h='';
@@ -272,79 +272,155 @@ function renderChinese(){
   }else if(currentSub==='listen'){
     h+='<div class="card"><div class="card-title">🔊 课文熏听 10分钟</div>';
     h+='<div class="task-item"><div class="task-check'+(d.ch_listen?' done':'')+'" data-id="ch_listen">✓</div><div class="task-text'+(d.ch_listen?' done':'')+'">课文熏听 10分钟</div><span class="task-time" id="chListenTime">0:00</span><button class="btn btn-primary btn-sm" id="chListenBtn" style="margin-left:6px">⏱</button></div>';
-    h+='<p style="font-size:12px;color:var(--gray-600);line-height:1.8;margin-top:10px;background:var(--blue-light);padding:10px;border-radius:10px">💡 熏听小贴士：<br>• 不用看屏幕，听音频即可<br>• 注意力放在发音和节奏<br>• 熟悉后尝试跟读<br>• 每天10分钟，日积月累语感大幅提升</p>';
+    h+='<p style="font-size:14px;color:var(--gray-600);line-height:1.8;margin-top:10px;background:var(--blue-light);padding:12px;border-radius:10px">💡 熏听小贴士：<br>• 不用看屏幕，听音频即可<br>• 注意力放在发音和节奏<br>• 熟悉后尝试跟读<br>• 每天10分钟，日积月累语感大幅提升</p>';
     h+='</div>';
   }else if(currentSub==='poem'){
-    h+='<div class="card"><div class="card-title">📜 古诗背诵（四年级上册）</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">点击「背诵打卡」按钮记录已背会的古诗</p>';
-    POEMS.forEach(function(p,i){
-      var key='poem_'+i;
-      var done=d[key];
-      h+='<div class="poem-card"><div class="poem-title">'+p.title+(done?' ✅':'')+'</div><div class="poem-author">'+p.author+'</div><div class="poem-content">'+p.content.replace(/\n/g,'<br>')+'</div><button class="poem-recite-btn'+(done?' done':'')+'" data-poem="'+i+'">'+(done?'已背✓':'背诵打卡')+'</button></div>';
-    });
+    // 闯关模式：每天一关，显示当前关
+    var currentLevel=d.ch_poem_level||0;
+    if(currentLevel>=POEMS.length)currentLevel=0;
+    var p=POEMS[currentLevel];
+    var key='poem_'+currentLevel;
+    var done=d[key];
+    h+='<div class="card" style="text-align:center;padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;ch_poem_level&apos;,-1,&apos;+POEMS.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;ch_poem_level&apos;,1,&apos;+POEMS.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:26px;font-weight:800;color:var(--pink);margin-bottom:4px;font-family:STKaiti,KaiTi,serif">'+p.title+'</div>';
+    h+='<div style="font-size:15px;color:var(--gray-500);margin-bottom:20px">'+p.author+'</div>';
+    h+='<div style="font-size:22px;line-height:2.2;color:#333;font-family:STKaiti,KaiTi,serif;margin-bottom:20px">'+p.content.replace(/\n/g,'<br>')+'</div>';
+    h+='<div style="background:var(--pink-light);border-radius:14px;padding:14px;margin-bottom:16px">';
+    h+='<div style="font-size:13px;color:var(--gray-600);line-height:1.8">📝 诗意：<br>明亮的月光照在床前，白白的就像地上结了霜。抬起头看天上的明月，低下头想起远方的家。</div>';
+    h+='</div>';
+    h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-poem="'+currentLevel+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已背会':'📖 我会背了！')+'</button>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+POEMS.length+'关 · 每天过1关</div>';
     h+='</div>';
   }else if(currentSub==='read'){
     h+='<div class="card"><div class="card-title">📖 课外阅读 1小时</div>';
     h+='<div class="task-item"><div class="task-check'+(d.ch_read?' done':'')+'" data-id="ch_read">✓</div><div class="task-text'+(d.ch_read?' done':'')+'">课外阅读 1小时</div><span class="task-time" id="chReadTime">0:00</span><button class="btn btn-primary btn-sm" id="chReadBtn" style="margin-left:6px">⏱</button></div>';
-    h+='<p style="font-size:12px;color:var(--gray-600);line-height:1.8;margin-top:10px;background:var(--pink-light);padding:10px;border-radius:10px">💡 阅读小贴士：<br>• 选择孩子感兴趣的课外书<br>• 读完后家长和孩子讨论内容<br>• 鼓励孩子说出自己的感想<br>• 可以做简单的读书笔记</p>';
+    h+='<p style="font-size:14px;color:var(--gray-600);line-height:1.8;margin-top:10px;background:var(--pink-light);padding:12px;border-radius:10px">💡 阅读小贴士：<br>• 选择孩子感兴趣的课外书<br>• 读完后家长和孩子讨论内容<br>• 鼓励孩子说出自己的感想<br>• 可以做简单的读书笔记</p>';
     h+='</div>';
   }else if(currentSub==='express'){
     h+='<div class="card"><div class="card-title">💡 理解表达力训练（每日轮换）</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">每天一道不同的题型，坚持训练让理解表达能力越来越棒！</p>';
+    h+='<p style="font-size:14px;color:var(--gray-500);margin-bottom:8px">每天一道不同的题型，坚持训练让理解表达能力越来越棒！</p>';
     var dayIdx=new Date().getDate()%EXPRESS.length;
     var e=EXPRESS[dayIdx];
     var key='express_'+dayIdx;
     var done=d[key];
-    h+='<div class="express-card"><span class="express-type">'+e.type+'</span><div class="express-content">'+e.content.replace(/\n/g,'<br>')+'</div><div style="font-size:11px;color:var(--purple);margin-bottom:6px">💡 '+e.hint+'</div><textarea class="express-input" placeholder="在这里写你的答案…" id="expressInput">'+(d['express_text_'+dayIdx]||'')+'</textarea><button class="btn btn-primary btn-sm" style="margin-top:8px" id="expressBtn">'+(done?'已完成✅':'提交答案')+'</button></div>';
+    h+='<div class="express-card"><span class="express-type">'+e.type+'</span><div class="express-content" style="font-size:15px;line-height:2">'+e.content.replace(/\n/g,'<br>')+'</div><div style="font-size:13px;color:var(--purple);margin-bottom:6px">💡 '+e.hint+'</div><textarea class="express-input" placeholder="在这里写你的答案…" id="expressInput">'+(d['express_text_'+dayIdx]||'')+'</textarea><button class="btn btn-primary btn-sm" style="margin-top:8px;font-size:14px;padding:8px 20px" id="expressBtn">'+(done?'已完成✅':'提交答案')+'</button></div>';
     h+='</div>';
   }
   return h;
 }
 
-// ============ 数学内容 ============
+// ============ 数学内容（闯关模式）============
 function renderMath(){
+  var d=loadTask();
   var h='';
   if(currentSub==='map'){
-    h+='<div class="card"><div class="card-title">🧠 知识思维导图</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">★难度等级 · →前后关联</p>';
-    MINDMAP.forEach(function(n){
-      var diffStars='';
-      for(var j=0;j<n.diff;j++)diffStars+='★';
-      h+='<div class="mindmap-node level'+n.level+'">'+n.name+'<span class="mindmap-difficulty diff-'+n.diff+'">'+diffStars+'</span></div>';
-      if(n.relation)h+='<div class="mindmap-relation">→ '+n.relation+'</div>';
-    });
+    // 思维导图闯关
+    var currentLevel=d.math_map_level||0;
+    if(currentLevel>=MINDMAP.length)currentLevel=0;
+    var n=MINDMAP[currentLevel];
+    var diffStars='';
+    for(var j=0;j<n.diff;j++)diffStars+='★';
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_map_level&apos;,-1,&apos;+MINDMAP.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_map_level&apos;,1,&apos;+MINDMAP.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:22px;font-weight:800;color:var(--blue);margin-bottom:8px">'+n.name+'</div>';
+    h+='<div style="font-size:16px;color:var(--gray-600);margin-bottom:10px">难度：<span style="color:var(--orange)">'+diffStars+'</span></div>';
+    if(n.relation)h+='<div style="font-size:14px;color:var(--gray-500);background:var(--blue-light);padding:10px;border-radius:10px;margin-bottom:16px">→ '+n.relation+'</div>';
+    h+='<p style="font-size:15px;color:var(--gray-600);line-height:2">💡 学习建议：<br>• 先理解这个知识点的含义<br>• 看课本例题<br>• 做3道练习题巩固</p>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+MINDMAP.length+'关 · 每天过1关</div>';
     h+='</div>';
   }else if(currentSub==='concept'){
-    h+='<div class="card"><div class="card-title">📋 概念公式速查表</div>';
-    h+='<table class="concept-table"><tr><th>类别</th><th>名称</th><th>公式</th><th>解释</th></tr>';
-    CONCEPTS.forEach(function(c){
-      h+='<tr><td>'+c.cat+'</td><td>'+c.name+'</td><td>'+c.formula+'</td><td>'+c.explain+'</td></tr>';
-    });
-    h+='</table></div>';
+    // 概念速查闯关
+    var currentLevel=d.math_concept_level||0;
+    if(currentLevel>=CONCEPTS.length)currentLevel=0;
+    var c=CONCEPTS[currentLevel];
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_concept_level&apos;,-1,&apos;+CONCEPTS.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_concept_level&apos;,1,&apos;+CONCEPTS.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:14px;color:var(--gray-500);margin-bottom:8px">'+c.cat+'</div>';
+    h+='<div style="font-size:24px;font-weight:800;color:var(--blue);margin-bottom:12px">'+c.name+'</div>';
+    h+='<div style="background:var(--blue-light);border-radius:14px;padding:16px;margin-bottom:16px">';
+    h+='<div style="font-size:18px;font-weight:700;color:var(--blue-dark);margin-bottom:8px">'+c.formula+'</div>';
+    h+='<div style="font-size:16px;color:#555;line-height:1.8">'+c.explain+'</div>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+CONCEPTS.length+'关 · 每天过1关</div>';
+    h+='</div>';
   }else if(currentSub==='quiz'){
-    h+='<div class="card"><div class="card-title">✏️ 分层互动练习题</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">答错看解析 · 不懂的题可一键删除同类</p>';
-    h+='<div class="card-subtitle">📗 基础题</div>';
-    h+=renderQuizHTML('basic',QUIZ_BASIC);
-    h+='<div class="card-subtitle">📙 提高题</div>';
-    h+=renderQuizHTML('improve',QUIZ_IMPROVE);
-    h+='<div class="card-subtitle">📕 挑战题</div>';
-    h+=renderQuizHTML('challenge',QUIZ_CHALLENGE);
+    // 练习题闯关
+    var currentLevel=d.math_quiz_level||0;
+    var allQuiz=QUIZ_BASIC.concat(QUIZ_IMPROVE).concat(QUIZ_CHALLENGE);
+    if(currentLevel>=allQuiz.length)currentLevel=0;
+    var q=allQuiz[currentLevel];
+    var levelName=currentLevel<QUIZ_BASIC.length?'基础':currentLevel<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'提高':'挑战';
+    var levelColor=currentLevel<QUIZ_BASIC.length?'var(--green)':currentLevel<QUIZ_BASIC.length+QUIZ_IMPROVE.length?'var(--orange)':'var(--purple)';
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_quiz_level&apos;,-1,&apos;+allQuiz.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_quiz_level&apos;,1,&apos;+allQuiz.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<span style="display:inline-block;padding:4px 14px;border-radius:12px;font-size:12px;font-weight:700;color:#fff;background:'+levelColor+'">'+levelName+'题</span>';
+    h+='<div style="font-size:20px;font-weight:700;margin:16px 0;line-height:1.6">'+q.q+'</div>';
+    h+='<div class="quiz-options">';
+    q.options.forEach(function(opt,j){
+      h+='<div class="quiz-option" data-quiz="all_'+currentLevel+'" data-opt="'+j+'" style="font-size:16px;padding:12px">'+opt+'</div>';
+    });
+    h+='</div>';
+    h+='<div class="quiz-explain" id="explain_all_'+currentLevel+'" style="font-size:14px;padding:12px">💡 '+q.explain+'</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+allQuiz.length+'关 · 每天过1关</div>';
     h+='</div>';
   }else if(currentSub==='life'){
-    h+='<div class="card"><div class="card-title">🏠 生活化解读手册</div>';
-    LIFE_MATH.forEach(function(l){
-      h+='<div class="life-card"><div class="life-concept">'+l.concept+'</div><div class="life-content">'+l.life+'</div><div class="life-q">💡 '+l.q+'</div></div>';
-    });
+    // 生活化解读闯关
+    var currentLevel=d.math_life_level||0;
+    if(currentLevel>=LIFE_MATH.length)currentLevel=0;
+    var l=LIFE_MATH[currentLevel];
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_life_level&apos;,-1,&apos;+LIFE_MATH.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_life_level&apos;,1,&apos;+LIFE_MATH.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:20px;font-weight:800;color:var(--blue);margin-bottom:12px">'+l.concept+'</div>';
+    h+='<div style="font-size:18px;color:#444;line-height:2;margin-bottom:16px;background:var(--blue-light);padding:16px;border-radius:14px">'+l.life+'</div>';
+    h+='<div style="font-size:16px;color:var(--orange);padding:12px;background:var(--orange-light);border-radius:12px">💡 '+l.q+'</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+LIFE_MATH.length+'关 · 每天过1关</div>';
     h+='</div>';
   }else if(currentSub==='pit'){
-    h+='<div class="card"><div class="card-title">⚠️ 易错点坑指南</div>';
-    PITFALLS.forEach(function(p){
-      h+='<div class="pit-card"><div class="pit-title">⚠️ '+p.pit+'</div>';
-      h+='<div class="pit-wrong">❌错误：'+p.wrong.replace(/\n/g,'<br>')+'</div>';
-      h+='<div class="pit-right">✅正确：'+p.right.replace(/\n/g,'<br>')+'</div>';
-      h+='<div class="pit-tip">🔑 '+p.tip+'</div></div>';
-    });
+    // 易错点闯关
+    var currentLevel=d.math_pit_level||0;
+    if(currentLevel>=PITFALLS.length)currentLevel=0;
+    var p=PITFALLS[currentLevel];
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_pit_level&apos;,-1,&apos;+PITFALLS.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#A6CCFF,#5B9BD5);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;math_pit_level&apos;,1,&apos;+PITFALLS.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:20px;font-weight:700;color:#FF6B6B;margin-bottom:16px">⚠️ '+p.pit+'</div>';
+    h+='<div style="background:#FFE5E5;border-radius:14px;padding:14px;margin-bottom:12px">';
+    h+='<div style="font-size:16px;color:#FF6B6B;margin-bottom:8px">❌ 错误做法</div>';
+    h+='<div style="font-size:18px;color:#555;line-height:1.8">'+p.wrong.replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
+    h+='<div style="background:var(--green-light);border-radius:14px;padding:14px;margin-bottom:12px">';
+    h+='<div style="font-size:16px;color:var(--green);margin-bottom:8px">✅ 正确做法</div>';
+    h+='<div style="font-size:18px;color:#555;line-height:1.8">'+p.right.replace(/\n/g,'<br>')+'</div>';
+    h+='</div>';
+    h+='<div style="background:var(--yellow-light);border-radius:14px;padding:14px">';
+    h+='<div style="font-size:16px;color:#8B6914">🔑 记忆口诀</div>';
+    h+='<div style="font-size:18px;color:#8B6914;line-height:1.8;margin-top:6px">'+p.tip+'</div>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+PITFALLS.length+'关 · 每天过1关</div>';
     h+='</div>';
   }
   return h;
@@ -367,49 +443,80 @@ function renderQuizHTML(level,questions){
   return h;
 }
 
-// ============ 英语内容 ============
+// ============ 英语内容（闯关模式）============
 function renderEnglish(){
   var d=loadTask();
   var h='';
   if(currentSub==='listen'){
-    var dayIdx=new Date().getDate()%LISTENINGS.length;
-    var L=LISTENINGS[dayIdx];
-    h+='<div class="card"><div class="card-title">🎧 听力练习</div>';
-    h+='<div class="listen-card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><button class="listen-play" id="listenPlayBtn">▶️</button><div><div style="font-size:13px;font-weight:700">'+L.title+'</div><div style="font-size:10px;color:var(--gray-500)">点击播放听力</div></div></div>';
-    h+='<div class="listen-text" id="listenText" style="display:none">'+L.text+'</div>';
-    h+='<button class="btn btn-sm" id="showTextBtn" style="background:var(--orange-light);color:var(--orange);margin-bottom:8px">👁 查看原文</button>';
+    // 听力闯关
+    var currentLevel=d.eng_listen_level||0;
+    if(currentLevel>=LISTENINGS.length)currentLevel=0;
+    var L=LISTENINGS[currentLevel];
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_listen_level&apos;,-1,&apos;+LISTENINGS.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_listen_level&apos;,1,&apos;+LISTENINGS.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:20px;font-weight:800;color:var(--orange);margin-bottom:12px">'+L.title+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><button class="listen-play" id="listenPlayBtn" style="width:50px;height:50px;font-size:20px">▶️</button><div style="font-size:14px;color:var(--gray-500)">点击播放听力</div></div>';
+    h+='<div class="listen-text" id="listenText" style="display:none;font-size:16px;line-height:2">'+L.text+'</div>';
+    h+='<button class="btn btn-sm" id="showTextBtn" style="background:var(--orange-light);color:var(--orange);margin-bottom:16px;font-size:14px">👁 查看原文</button>';
     L.questions.forEach(function(qi,i){
-      h+='<div style="margin-bottom:8px"><div style="font-size:12px;font-weight:600;margin-bottom:5px">Q'+(i+1)+'. '+qi.q+'</div>';
+      h+='<div style="margin-bottom:12px"><div style="font-size:16px;font-weight:600;margin-bottom:8px">Q'+(i+1)+'. '+qi.q+'</div>';
       h+='<div class="quiz-options">';
       qi.options.forEach(function(opt,j){
-        h+='<div class="quiz-option" data-lq="'+i+'" data-lopt="'+j+'">'+opt+'</div>';
+        h+='<div class="quiz-option" data-lq="'+i+'" data-lopt="'+j+'" style="font-size:15px;padding:10px">'+opt+'</div>';
       });
-      h+='</div><div class="quiz-explain" id="lexplain_'+i+'">正确答案：'+qi.options[qi.answer]+'</div></div>';
+      h+='</div><div class="quiz-explain" id="lexplain_'+i+'" style="font-size:14px;padding:10px">正确答案：'+qi.options[qi.answer]+'</div></div>';
     });
-    h+='</div></div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+LISTENINGS.length+'关 · 每天过1关</div>';
+    h+='</div>';
   }else if(currentSub==='xueersi'){
     h+='<div class="card"><div class="card-title">📝 学而思练习册</div>';
     h+='<div class="task-item"><div class="task-check'+(d.eng_xueersi?' done':'')+'" data-id="eng_xueersi">✓</div><div class="task-text'+(d.eng_xueersi?' done':'')+'">完成学而思练习册一页</div></div>';
-    h+='<p style="font-size:12px;color:var(--gray-600);margin-top:10px;line-height:1.8;background:var(--orange-light);padding:10px;border-radius:10px">💡 做题小贴士：<br>• 不认识的单词先做标记<br>• 做完一题检查一题<br>• 错题要看解析并整理笔记</p>';
+    h+='<p style="font-size:14px;color:var(--gray-600);margin-top:10px;line-height:1.8;background:var(--orange-light);padding:12px;border-radius:10px">💡 做题小贴士：<br>• 不认识的单词先做标记<br>• 做完一题检查一题<br>• 错题要看解析并整理笔记</p>';
     h+='</div>';
   }else if(currentSub==='words'){
-    h+='<div class="card"><div class="card-title">📖 单词短语背诵</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">点击单词朗读 · 收藏⭐重点单词</p>';
-    WORDS.forEach(function(u){
-      h+='<div class="card-subtitle">'+u.unit+'</div>';
-      u.list.forEach(function(w,i){
-        var key='word_'+u.unit+'_'+i;
-        var starred=d[key];
-        h+='<div class="word-row"><span class="word-en">'+w.en+'</span><span class="word-cn">'+w.cn+'</span><button class="word-speak" data-en="'+w.en+'">🔊</button><span class="word-star'+(starred?' on':'')+'" data-wkey="'+key+'">⭐</span></div>';
-      });
-    });
+    // 单词闯关
+    var allWords=[];
+    WORDS.forEach(function(u){u.list.forEach(function(w,i){allWords.push({en:w.en,cn:w.cn,unit:u.unit,idx:i});});});
+    var currentLevel=d.eng_word_level||0;
+    if(currentLevel>=allWords.length)currentLevel=0;
+    var w=allWords[currentLevel];
+    var key='word_'+w.unit+'_'+w.idx;
+    var starred=d[key];
+    h+='<div class="card" style="text-align:center;padding:30px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_word_level&apos;,-1,&apos;+allWords.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_word_level&apos;,1,&apos;+allWords.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:42px;font-weight:800;color:var(--orange);margin-bottom:8px">'+w.en+'</div>';
+    h+='<div style="font-size:24px;color:var(--gray-600);margin-bottom:20px">'+w.cn+'</div>';
+    h+='<div style="display:flex;justify-content:center;gap:16px;margin-bottom:20px">';
+    h+='<button class="word-speak" data-en="'+w.en+'" style="width:50px;height:50px;font-size:20px;border-radius:50%">🔊</button>';
+    h+='<span class="word-star'+(starred?' on':'')+'" data-wkey="'+key+'" style="font-size:36px;cursor:pointer">⭐</span>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+allWords.length+'关 · 每天过1关</div>';
     h+='</div>';
   }else if(currentSub==='grammar'){
-    h+='<div class="card"><div class="card-title">📐 语法技巧总结</div>';
-    h+='<p style="font-size:11px;color:var(--gray-500);margin-bottom:8px">1-6年级语法 + 背单词技巧</p>';
-    GRAMMARS.forEach(function(g){
-      h+='<div class="grammar-card"><div class="grammar-title">'+g.title+'</div><div class="grammar-rule">'+g.rule+'</div><div class="grammar-example">例：'+g.example+'</div></div>';
-    });
+    // 语法闯关
+    var currentLevel=d.eng_grammar_level||0;
+    if(currentLevel>=GRAMMARS.length)currentLevel=0;
+    var g=GRAMMARS[currentLevel];
+    h+='<div class="card" style="padding:20px 14px">';
+    h+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_grammar_level&apos;,-1,&apos;+GRAMMARS.length+&apos;)">⬅ 上一关</button>';
+    h+='<div style="background:linear-gradient(135deg,#FFD93D,#FFA552);color:#fff;padding:6px 16px;border-radius:16px;font-size:14px;font-weight:800">⭐ 第'+(currentLevel+1)+'关</div>';
+    h+='<button class="btn btn-sm" style="background:var(--gray-100);color:var(--gray-600)" onclick="changeLevel(&apos;eng_grammar_level&apos;,1,&apos;+GRAMMARS.length+&apos;)">下一关 ➡</button>';
+    h+='</div>';
+    h+='<div style="font-size:22px;font-weight:800;color:var(--orange);margin-bottom:16px">'+g.title+'</div>';
+    h+='<div style="background:var(--orange-light);border-radius:14px;padding:16px;margin-bottom:16px">';
+    h+='<div style="font-size:18px;color:#555;line-height:1.8;margin-bottom:10px">'+g.rule+'</div>';
+    h+='<div style="font-size:16px;color:#8B5A1B;background:#fff;padding:10px;border-radius:10px">例：'+g.example+'</div>';
+    h+='</div>';
+    h+='<div style="font-size:11px;color:var(--gray-500)">共'+GRAMMARS.length+'关 · 每天过1关</div>';
     h+='</div>';
   }
   return h;
@@ -730,6 +837,18 @@ function doBathStep(i){
 function showPraise(e,t){$('#praiseEmoji').textContent=e;$('#praiseText').textContent=t;$('#praiseModal').classList.add('show');}
 function closeModal(id){$('#'+id).classList.remove('show');}
 function closeAllModals(){$$('.modal').forEach(function(m){m.classList.remove('show')});}
+
+// ============ 关卡切换 ============
+function changeLevel(key,delta,max){
+  var d=loadTask();
+  var current=d[key]||0;
+  current+=delta;
+  if(current<0)current=0;
+  if(current>=max)current=max-1;
+  d[key]=current;
+  saveTask(d);
+  renderContent();
+}
 
 // ============ 初始化 ============
 function init(){
