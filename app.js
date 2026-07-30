@@ -812,7 +812,7 @@ function renderGoodWords(d){
   h+='<div style="background:var(--purple-light);border-radius:12px;padding:12px;font-size:14px;line-height:1.8;color:#555;text-align:left">'+g.analysis+'</div>';
   h+='</div>';
   // 打卡
-  h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-gword="'+currentLevel+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已积累':'📝 积累好词好句')+'</button>';
+  h+='<button class="poem-recite-btn'+(done?' done':'')+'" data-gword="'+dayIdx+'" style="font-size:16px;padding:10px 30px;border-radius:20px">'+(done?'✅ 已积累':'📝 积累好词好句')+'</button>';
   h+='<div style="font-size:11px;color:var(--gray-500);margin-top:10px">共'+GOOD_WORDS.length+'篇 · 每日自动轮换</div>';
   h+='</div>';
   return h;
