@@ -210,3 +210,68 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft 
   .mascot{width:54px;height:54px}
   .mascot-name{font-size:16px}
 }
+
+/* ============ 游戏相关样式 ============ */
+
+/* 紫色 subcat-pill */
+.subcat-pill[data-color="purple"].active{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* 游戏首页 */
+.game-hero{background:linear-gradient(135deg,#F0EAFA,#E8E0F5);border-radius:var(--radius);padding:16px;margin-bottom:12px;text-align:center}
+.game-stats-box{background:#fff;border-radius:12px;padding:8px 14px;text-align:center;box-shadow:var(--shadow-sm);min-width:70px}
+.game-stats-num{font-size:20px;font-weight:800;color:var(--purple);display:block}
+.game-badge-tag{background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700}
+
+.game-theme-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.game-theme-card:active{transform:scale(.98)}
+.game-theme-card.completed{border-color:var(--green);background:var(--green-light)}
+.game-theme-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.game-theme-info{flex:1}
+.game-theme-name{font-size:14px;font-weight:800}
+.game-theme-progress{font-size:11px;color:var(--gray-500)}
+.game-theme-stars{font-size:20px;flex-shrink:0}
+.gt-math{background:linear-gradient(135deg,#A6CCFF,#5B9BD5)}.gt-chinese{background:linear-gradient(135deg,#FFB6C1,#FF85A2)}.gt-english{background:linear-gradient(135deg,#FFD93D,#FFA552)}
+
+/* 答题界面 */
+.game-play-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.game-play-progress{height:8px;background:var(--gray-100);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.game-play-progress-fill{height:100%;background:linear-gradient(90deg,#B19CD9,#9B7ED4);transition:width .3s}
+
+.game-question-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+.game-q-num{font-size:12px;font-weight:700;color:var(--purple);margin-bottom:6px}
+.game-q-text{font-size:17px;font-weight:700;line-height:1.6;margin-bottom:14px}
+.game-q-options{display:flex;flex-direction:column;gap:8px}
+.game-q-option{padding:12px 14px;border:2px solid var(--gray-200);border-radius:12px;font-size:15px;cursor:pointer;transition:all .15s;background:#fff}
+.game-q-option:active{transform:scale(.98)}
+.game-q-option.correct{border-color:var(--green);background:var(--green-light);animation:correctPop .4s}
+.game-q-option.wrong{border-color:#FF6B6B;background:#FFE5E5;animation:shake .3s}
+@keyframes correctPop{0%{transform:scale(1)}50%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.game-feedback{text-align:center;padding:12px;margin-top:8px;border-radius:12px;animation:fadeIn .3s}
+.game-feedback.right{background:var(--green-light);color:var(--green)}
+.game-feedback.wrong{background:#FFF0F0;color:#FF6B6B}
+.game-feedback-emoji{font-size:32px}
+
+.game-explain-box{background:var(--yellow-light);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.6;color:#8B6914;margin-top:8px}
+
+/* 结算界面 */
+.game-result{text-align:center;padding:20px 16px}
+.game-result-stars{font-size:40px;margin:10px 0;letter-spacing:4px}
+.game-result-badge{display:inline-block;background:linear-gradient(135deg,#FFD700,#FFA500);color:#fff;padding:6px 16px;border-radius:14px;font-size:13px;font-weight:800;margin:4px;animation:fadeIn .5s}
+.game-result-wrong-list{background:#FFF5F5;border-radius:10px;padding:10px;margin-top:12px;text-align:left}
+
+/* 错题本 */
+.wrong-item{background:#fff;border-left:3px solid #FF6B6B;border-radius:10px;padding:10px 12px;margin-bottom:8px;box-shadow:var(--shadow-sm)}
+.wrong-q{font-size:13px;font-weight:600;margin-bottom:6px}
+.wrong-ans{font-size:11px;color:var(--green);font-weight:700}
+.wrong-mine{font-size:11px;color:#FF6B6B;font-weight:700}
+
+/* 锁定提示 */
+.game-locked{text-align:center;padding:30px 20px}
+.game-locked-icon{font-size:48px;margin-bottom:12px}
+.game-lock-msg{font-size:14px;color:var(--gray-600);line-height:1.8;background:var(--yellow-light);padding:12px;border-radius:12px;text-align:left}
+
+/* 设置面板 */
+.game-setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed var(--gray-100)}
+.game-setting-val{font-size:16px;font-weight:800;color:var(--purple)}
