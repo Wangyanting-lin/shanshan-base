@@ -13,6 +13,19 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
   <link rel="stylesheet" href="style.css?v=7">
+  <style>
+    /* 强制覆盖：美乐蒂头像大小 */
+    .mascot{width:80px!important;height:80px!important}
+    /* 强制覆盖：sad状态灰色 */
+    .mascot.sad{opacity:.6!important}
+    .mascot.sad .mascot-svg{filter:grayscale(.8) brightness(.8)!important;-webkit-filter:grayscale(.8) brightness(.8)!important}
+    /* 强制覆盖：happy状态 */
+    .mascot.happy .mascot-svg{animation:wiggle 2s ease-in-out infinite}
+    @keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+    /* 强制覆盖：super状态 */
+    .mascot.super .mascot-svg{animation:bounce .4s ease infinite alternate}
+    @keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+  </style>
 </head>
 <body>
 <div class="app">
