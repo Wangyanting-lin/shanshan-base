@@ -1,4 +1,4 @@
-var CACHE_NAME = 'shanshan-base-v7';
+var CACHE_NAME = 'shanshan-base-v8';
 var ASSETS = [
   './',
   './index.html',
